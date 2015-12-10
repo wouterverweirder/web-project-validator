@@ -1,0 +1,21 @@
+{
+  "name": "web-project-validator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Wouter Verweirder <wouter.verweirder@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "csslint": "^0.10.0",
+    "h5o": "^0.11.3",
+    "jsdom": "^7.2.0",
+    "minimist": "^1.2.0",
+    "node-fetch": "git://github.com/wouterverweirder/node-fetch.git#master",
+    "phantom": "^0.8.4",
+    "w3cjs": "^0.3.0"
+  }
+}
