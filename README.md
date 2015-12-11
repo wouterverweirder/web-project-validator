@@ -19,30 +19,30 @@ On OSX this might be a challenge. These are the steps I followed to update my Ja
 2. Run the installer
 3. In Terminal, navigate to the following location:
 
-```
-$ cd /System/Library/Frameworks/JavaVM.framework/Versions/
-```
+  ```
+  $ cd /System/Library/Frameworks/JavaVM.framework/Versions/
+  ```
 
 4. Remove the CurrentJDK symlink in this directory:
 
-```
-$ sudo rm CurrentJDK
-```
+  ```
+  $ sudo rm CurrentJDK
+  ```
 
 5. Link the JDK you just installed as CurrentJDK:
 
-```
-$ sudo ln -s /Library/Java/JavaVirtualMachines/jdk1.8.0_65.jdk/Contents/ CurrentJDK
-```
+  ```
+  $ sudo ln -s /Library/Java/JavaVirtualMachines/jdk1.8.0_65.jdk/Contents/ CurrentJDK
+  ```
 
 6. Run java -version - it should output the java version you just installed:
 
-```
-$ java -version
-java version "1.8.0_65"
-Java(TM) SE Runtime Environment (build 1.8.0_65-b17)
-Java HotSpot(TM) 64-Bit Server VM (build 25.65-b01, mixed mode)
-```
+  ```
+  $ java -version
+  java version "1.8.0_65"
+  Java(TM) SE Runtime Environment (build 1.8.0_65-b17)
+  Java HotSpot(TM) 64-Bit Server VM (build 25.65-b01, mixed mode)
+  ```
 
 ### NPM installs
 
