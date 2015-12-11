@@ -16,6 +16,6 @@
     "minimist": "^1.2.0",
     "node-fetch": "git://github.com/wouterverweirder/node-fetch.git#master",
     "phantom": "^0.8.4",
-    "w3cjs": "^0.3.0"
+    "validator-nu": "^2.1.15"
   }
 }
