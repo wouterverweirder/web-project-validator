@@ -37,15 +37,26 @@ var processInputFolder = function(folderPath) {
   var reportsByFile = {};
   getHtmlFilesFromDirectory(folderPath)
     .then(function(htmlFilePaths){
-      var generateReportCalls = [];
+      htmlFilePaths.sort();
+      return htmlFilePaths;
+    })
+    .then(function(htmlFilePaths){
+      var sequence = Promise.resolve();
       htmlFilePaths.forEach(function(htmlFilePath){
-        var seq = generateReportForFile(htmlFilePath);
-        seq.then(function(report){
-          console.log(generateReportOutput(report));
-        });
-        generateReportCalls.push(seq);
+        sequence = sequence
+          .then(function(){
+            return generateReportForFile(htmlFilePath);
+          })
+          .then(function(report){
+            return generateReportOutput(report);
+          })
+          .then(console.log)
+          .catch(function(error) {
+            console.log('error');
+            console.log(htmlFilePath);
+            console.log(error);
+          });
       });
-      var sequence = Promise.all(generateReportCalls);
       return sequence;
     })
     .catch(function(error){
