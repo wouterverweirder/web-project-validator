@@ -27,8 +27,10 @@ var processInputFile = function(filePath) {
       console.log(error);
     })
     .then(function(){
-      //stop the phantomjs bridge
+      //stop the phantomjs bridge & the vnu bridge
       lib.phantom.stop();
+      lib.vnu.close();
+      console.log('all done');
     });
 };
 
@@ -64,8 +66,10 @@ var processInputFolder = function(folderPath) {
       console.log(error);
     })
     .then(function(){
-      //stop the phantomjs bridge
+      //stop the phantomjs bridge & the vnu bridge
       lib.phantom.stop();
+      lib.vnu.close();
+      console.log('all done');
     });
 };
 
