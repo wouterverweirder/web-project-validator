@@ -1,0 +1,10 @@
+{{#each children}} {{! Each item is an "li" }}
+  <li>
+    {{title}}
+    {{#if children}} {{! Within the context of the current item }}
+      <ol>
+        {{> list}} {{! Recursively render the partial }}
+      </ol>
+    {{/if}}
+  </li>
+{{/each}}

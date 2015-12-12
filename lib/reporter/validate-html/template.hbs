@@ -1,0 +1,21 @@
+<section>
+  <header>
+    <h1 class="h{{indentLevel}}">
+      HTML Validation:
+      <span class="small">{{dangerMessages.length}} errors / {{warningMessages.length}} warnings</span>
+    </h1>
+  </header>
+  <p>{{context}}</p>
+  <section>
+    <header class="hidden"><h1 class="h{{indentLevel2}}">validation messages</h1></header>
+    {{#each messages}}
+      <article class="panel panel-{{outputType}}">
+        <header class="panel-heading"><h1 class="panel-title">{{outputType}}</h1></header>
+        <div class="panel-body">
+          {{#if extract}}<p class="extract"><pre>{{extract}}</pre></p>{{/if}}
+          <p class="message">{{message}}</p>
+        </div>
+      </article>
+    {{/each}}
+  </section>
+</section>

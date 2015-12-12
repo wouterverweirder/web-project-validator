@@ -63,7 +63,7 @@ $ npm install
 ### Get a report on one html file
 
 ```
-$ node app.js --input-file path/to/the/html/file > report.txt
+$ node app.js --input-file path/to/the/html/file
 ```
 
 ### Get a report on a folder
@@ -71,5 +71,5 @@ $ node app.js --input-file path/to/the/html/file > report.txt
 This will scan a folder recursively, and create a report on every html file it finds inside that folder and its subfolders.
 
 ```
-$ node app.js --input-folder path/to/the/folder > report.txt
+$ node app.js --input-folder path/to/the/folder
 ```
