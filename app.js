@@ -1,21 +1,14 @@
 var argv = require('minimist')(process.argv.slice(2));
-var lib = require('./lib/index.js');
 
-var generateIndent = lib.generateIndent;
+var lintLinkedCssFilesReporter = require('./lib/reporter/lint-linked-css-files.js');
+var outlineHtmlReporter = require('./lib/reporter/outline-html.js');
+var validateHtmlReporter = require('./lib/reporter/validate-html.js');
+var validateLinkedResourcePathsReporter = require('./lib/reporter/validate-linked-resource-paths.js');
 
-var getHtmlFilesFromDirectory = lib.getHtmlFilesFromDirectory;
+var generateIndent = require('./lib/indent_utils.js').generateIndent;
+var getHtmlFilesFromDirectory = require('./lib/fs_utils.js').getHtmlFilesFromDirectory;
 
-var validateHtml = lib.validateHtml;
-var generateValidatorReportOutput = lib.generateValidatorReportOutput;
-
-var outlineHtml = lib.outlineHtml;
-var generateOutlinerReportOutput = lib.generateOutlinerReportOutput;
-
-var lintCssFilesForHtmlFile = lib.lintCssFilesForHtmlFile;
-var generateHtmlCssLintReportsOutput = lib.generateHtmlCssLintReportsOutput;
-
-var validateLoadedResourcesFromHtml = lib.validateLoadedResourcesFromHtml;
-var generateHtmlLoadedResourceReportsOutput = lib.generateHtmlLoadedResourceReportsOutput;
+var phantomBridge = require('./lib/phantom_bridge.js');
 
 var init = function() {
   run()
@@ -25,8 +18,8 @@ var init = function() {
     })
     .then(function(){
       //stop the phantomjs bridge & the vnu bridge
-      lib.phantom.stop();
-      lib.vnu.close();
+      phantomBridge.stop();
+      validateHtmlReporter.exit();
       console.log('all done');
     });
 };
@@ -96,24 +89,24 @@ var generateReportForFile = function(filePath) {
     validator: false,
     outliner: false
   };
-  return validateHtml(filePath)
+  return validateHtmlReporter.generateReport(filePath)
     .then(function(validatorResult){
       report.validator = validatorResult;
     })
     .then(function(){
-      return outlineHtml(filePath)
+      return outlineHtmlReporter.generateReport(filePath)
     })
     .then(function(outlinerResult){
       report.outliner = outlinerResult
     })
     .then(function(){
-      return lintCssFilesForHtmlFile(filePath)
+      return lintLinkedCssFilesReporter.generateReport(filePath)
     })
     .then(function(cssLinterReportsForHtmlFile){
       report.csslinter = cssLinterReportsForHtmlFile
     })
     .then(function(){
-      return validateLoadedResourcesFromHtml(filePath);
+      return validateLinkedResourcePathsReporter.generateReport(filePath);
     })
     .then(function(loadedResourcesReport){
       report.assets = loadedResourcesReport;
@@ -134,11 +127,38 @@ var generateTextReport = function(report, indentLevel) {
     }
     var indent = generateIndent(indentLevel);
     var output = indent + report.filePath + "\n";
-    output += generateValidatorReportOutput(report.validator, indentLevel + 1);
-    output += generateOutlinerReportOutput(report.outliner, indentLevel + 1);
-    output += generateHtmlCssLintReportsOutput(report.csslinter, indentLevel + 1);
-    output += generateHtmlLoadedResourceReportsOutput(report.assets, indentLevel + 1);
-    resolve(output);
+
+    var sequence = Promise.resolve()
+      .then(function(){
+        return validateHtmlReporter.convertReportToPlainText(report.validator, indentLevel + 1);
+      })
+      .then(function(reportOutput) {
+        output += reportOutput;
+      })
+      .then(function(){
+        return outlineHtmlReporter.convertReportToPlainText(report.outliner, indentLevel + 1);
+      })
+      .then(function(reportOutput) {
+        output += reportOutput;
+      })
+      .then(function(){
+        return lintLinkedCssFilesReporter.convertReportToPlainText(report.csslinter, indentLevel + 1);
+      })
+      .then(function(reportOutput) {
+        output += reportOutput;
+      })
+      .then(function(){
+        return validateLinkedResourcePathsReporter.convertReportToPlainText(report.assets, indentLevel + 1);
+      })
+      .then(function(reportOutput) {
+        output += reportOutput;
+      })
+      .then(function(){
+        resolve(output);
+      })
+      .catch(function(error){
+        reject(error);
+      });
   });
 };
 
