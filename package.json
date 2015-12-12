@@ -18,6 +18,7 @@
     "mkdirp": "^0.5.1",
     "node-fetch": "git://github.com/wouterverweirder/node-fetch.git#master",
     "phantom": "^0.8.4",
-    "validator-nu": "^2.1.15"
+    "validator-nu": "^2.1.15",
+    "webdriverio": "^3.3.0"
   }
 }

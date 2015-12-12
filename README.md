@@ -44,6 +44,22 @@ On OSX this might be a challenge. These are the steps I followed to update my Ja
   Java HotSpot(TM) 64-Bit Server VM (build 25.65-b01, mixed mode)
   ```
 
+### Selenium
+
+You will need to have selenium server running.
+
+1. Download selenium standalone server
+
+  ```
+  $ curl -O http://selenium-release.storage.googleapis.com/2.48/selenium-server-standalone-2.48.2.jar
+  ```
+
+2. Start selenium server and keep it running in a terminal window
+
+  ```
+  $ java -jar selenium-server-standalone-2.48.2.jar
+  ```
+
 ### NPM installs
 
 Make sure you have phantomjs installed globally:

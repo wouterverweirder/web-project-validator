@@ -7,6 +7,7 @@ var lintLinkedCssFilesReporter = require('./lib/reporter/lint-linked-css-files')
 var outlineHtmlReporter = require('./lib/reporter/outline-html');
 var validateHtmlReporter = require('./lib/reporter/validate-html');
 var validateLinkedResourcePathsReporter = require('./lib/reporter/validate-linked-resource-paths');
+var screenshotHtmlReporter = require('./lib/reporter/screenshot-html');
 
 var generateIndent = require('./lib/indent_utils').generateIndent;
 var getHtmlFilesFromDirectory = require('./lib/fs_utils').getHtmlFilesFromDirectory;
@@ -30,9 +31,14 @@ var init = function() {
       console.log(error);
     })
     .then(function(){
-      //stop the phantomjs bridge & the vnu bridge
+      //stop the bridger
       phantomBridge.stop();
       validateHtmlReporter.exit();
+    })
+    .then(function(){
+      return screenshotHtmlReporter.exit();
+    })
+    .then(function(){
       console.log('all done');
     });
 };
@@ -106,7 +112,10 @@ var generateReportForFile = function(filePath, options) {
     validator: false,
     outliner: false
   };
-  return validateHtmlReporter.generateReport(filePath, options)
+  return Promise.resolve()
+    .then(function(){
+      return validateHtmlReporter.generateReport(filePath, options);
+    })
     .then(function(validatorResult){
       report.validator = validatorResult;
     })
@@ -127,6 +136,12 @@ var generateReportForFile = function(filePath, options) {
     })
     .then(function(loadedResourcesReport){
       report.assets = loadedResourcesReport;
+    })
+    .then(function(){
+      return screenshotHtmlReporter.generateReport(filePath, options);
+    })
+    .then(function(screenshotResult){
+      report.screenshot = screenshotResult;
     })
     .then(function(){
       return report;
@@ -254,6 +269,12 @@ var generateHtmlReport = function(report, options) {
       })
       .then(function(){
         return validateLinkedResourcePathsReporter.convertReportToHtml(report.assets, Object.assign({}, options, { indentLevel: options.indentLevel + 1 }));
+      })
+      .then(function(reportOutput) {
+        output += reportOutput;
+      })
+      .then(function(){
+        return screenshotHtmlReporter.convertReportToHtml(report.screenshot, Object.assign({}, options, { indentLevel: options.indentLevel + 1 }));
       })
       .then(function(reportOutput) {
         output += reportOutput;
