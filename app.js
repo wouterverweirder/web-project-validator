@@ -43,7 +43,7 @@ var processInputFile = function(filePath) {
   return new Promise(function(resolve, reject){
     generateReportForFile(filePath)
       .then(function(report){
-        console.log(generateReportOutput(report));
+        return generateReportOutput(report);
       })
       .catch(function(error){
         throw(error);
@@ -73,7 +73,6 @@ var processInputFolder = function(folderPath) {
             .then(function(report){
               return generateReportOutput(report);
             })
-            .then(console.log)
             .catch(function(error) {
               console.log('error');
               console.log(htmlFilePath);
@@ -125,16 +124,22 @@ var generateReportForFile = function(filePath) {
 };
 
 var generateReportOutput = function(report, indentLevel) {
-  if(!indentLevel) {
-    indentLevel = 0;
-  }
-  var indent = generateIndent(indentLevel);
-  var output = indent + report.filePath + "\n";
-  output += generateValidatorReportOutput(report.validator, indentLevel + 1);
-  output += generateOutlinerReportOutput(report.outliner, indentLevel + 1);
-  output += generateHtmlCssLintReportsOutput(report.csslinter, indentLevel + 1);
-  output += generateHtmlLoadedResourceReportsOutput(report.assets, indentLevel + 1);
-  return output;
+  return generateTextReport(report, indentLevel).then(console.log);
+};
+
+var generateTextReport = function(report, indentLevel) {
+  return new Promise(function(resolve, reject){
+    if(!indentLevel) {
+      indentLevel = 0;
+    }
+    var indent = generateIndent(indentLevel);
+    var output = indent + report.filePath + "\n";
+    output += generateValidatorReportOutput(report.validator, indentLevel + 1);
+    output += generateOutlinerReportOutput(report.outliner, indentLevel + 1);
+    output += generateHtmlCssLintReportsOutput(report.csslinter, indentLevel + 1);
+    output += generateHtmlLoadedResourceReportsOutput(report.assets, indentLevel + 1);
+    resolve(output);
+  });
 };
 
 init();
