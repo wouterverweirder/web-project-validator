@@ -17,11 +17,8 @@ var generateHtmlCssLintReportsOutput = lib.generateHtmlCssLintReportsOutput;
 var validateLoadedResourcesFromHtml = lib.validateLoadedResourcesFromHtml;
 var generateHtmlLoadedResourceReportsOutput = lib.generateHtmlLoadedResourceReportsOutput;
 
-var processInputFile = function(filePath) {
-  generateReportForFile(filePath)
-    .then(function(report){
-      console.log(generateReportOutput(report));
-    })
+var init = function() {
+  run()
     .catch(function(error){
       console.log('error');
       console.log(error);
@@ -34,43 +31,64 @@ var processInputFile = function(filePath) {
     });
 };
 
-var processInputFolder = function(folderPath) {
-  console.log('reading folder ' + argv['input-folder'] + ' recursively');
-  var reportsByFile = {};
-  getHtmlFilesFromDirectory(folderPath)
-    .then(function(htmlFilePaths){
-      htmlFilePaths.sort();
-      return htmlFilePaths;
-    })
-    .then(function(htmlFilePaths){
-      var sequence = Promise.resolve();
-      htmlFilePaths.forEach(function(htmlFilePath){
-        sequence = sequence
-          .then(function(){
-            return generateReportForFile(htmlFilePath);
-          })
-          .then(function(report){
-            return generateReportOutput(report);
-          })
-          .then(console.log)
-          .catch(function(error) {
-            console.log('error');
-            console.log(htmlFilePath);
-            console.log(error);
-          });
+var run = function() {
+  if(argv['input-file']) {
+    return processInputFile(argv['input-file']);
+  } else if(argv['input-folder']) {
+    return processInputFolder(argv['input-folder']);
+  }
+};
+
+var processInputFile = function(filePath) {
+  return new Promise(function(resolve, reject){
+    generateReportForFile(filePath)
+      .then(function(report){
+        console.log(generateReportOutput(report));
+      })
+      .catch(function(error){
+        throw(error);
+      })
+      .then(function(){
+        resolve();
       });
-      return sequence;
-    })
-    .catch(function(error){
-      console.log('error');
-      console.log(error);
-    })
-    .then(function(){
-      //stop the phantomjs bridge & the vnu bridge
-      lib.phantom.stop();
-      lib.vnu.close();
-      console.log('all done');
-    });
+  });
+};
+
+var processInputFolder = function(folderPath) {
+  return new Promise(function(resolve, reject){
+    console.log('reading folder ' + folderPath + ' recursively');
+    var reportsByFile = {};
+    getHtmlFilesFromDirectory(folderPath)
+      .then(function(htmlFilePaths){
+        htmlFilePaths.sort();
+        return htmlFilePaths;
+      })
+      .then(function(htmlFilePaths){
+        var sequence = Promise.resolve();
+        htmlFilePaths.forEach(function(htmlFilePath){
+          sequence = sequence
+            .then(function(){
+              return generateReportForFile(htmlFilePath);
+            })
+            .then(function(report){
+              return generateReportOutput(report);
+            })
+            .then(console.log)
+            .catch(function(error) {
+              console.log('error');
+              console.log(htmlFilePath);
+              console.log(error);
+            });
+        });
+        return sequence;
+      })
+      .catch(function(error){
+        throw(error);
+      })
+      .then(function(){
+        resolve();
+      });
+  });
 };
 
 var generateReportForFile = function(filePath) {
@@ -119,8 +137,4 @@ var generateReportOutput = function(report, indentLevel) {
   return output;
 };
 
-if(argv['input-file']) {
-  processInputFile(argv['input-file']);
-} else if(argv['input-folder']) {
-  processInputFolder(argv['input-folder']);
-}
+init();
