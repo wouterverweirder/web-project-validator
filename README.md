@@ -7,8 +7,11 @@ Analyse an html project automatically and get a report with info on:
 - css quality (using csslint)
 - file naming (use lowercase characters, no special characters, ...)
 - file resolving (get reports if referenced files cannot be found)
+- screenshots (phantomjs & firefox)
 
 ## Installation
+
+The validator runs on node 4.x. There are some additional dependencies:
 
 ### JDK
 
