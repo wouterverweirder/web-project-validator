@@ -299,50 +299,108 @@ var generateHtmlReport = function(report, options) {
       options.indentLevel = 0;
     }
     var indent = generateIndent(options.indentLevel);
-    var output = '<html>';
-    output += '<head>';
-    output += '<meta charset="UTF-8" />';
-    output += '<meta name="viewport" content="width=device-width, initial-scale=1">';
-    output += '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">';
-    output += '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">';
-    output += '<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>';
-    output += '<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>';
-    output += '</head>';
-    output += '<body>';
-    output += '<main class="container-fluid">';
-    output += '<header><h1>Webpage Report</h1></header>';
-    output += '<p>' + report.context + '</p>';
 
-    var sequence = Promise.resolve()
+    var reporters = [
+      { title: 'HTML Validation', name: 'validate-html', method: validateHtmlReporter.convertReportToHtml, report: report.validator },
+      { title: 'Outline', name: 'outline-html', method: outlineHtmlReporter.convertReportToHtml, report: report.outline },
+      { title: 'CSS Lint', name: 'lint-css', method: lintLinkedCssFilesReporter.convertReportToHtml, report: report.csslint },
+      { title: 'Resources', name: 'validate-linked-resource-paths', method: validateLinkedResourcePathsReporter.convertReportToHtml, report: report.resources }
+    ];
+
+    var output = '';
+
+    var sequence = Promise.resolve();
+    sequence = sequence
       .then(function(){
-        return validateHtmlReporter.convertReportToHtml(report.validator, Object.assign({}, options, { indentLevel: options.indentLevel + 1 }));
-      })
-      .then(function(reportOutput) {
-        output += reportOutput;
-      })
-      .then(function(){
-        return outlineHtmlReporter.convertReportToHtml(report.outline, Object.assign({}, options, { indentLevel: options.indentLevel + 1 }));
-      })
-      .then(function(reportOutput) {
-        output += reportOutput;
-      })
-      .then(function(){
-        return lintLinkedCssFilesReporter.convertReportToHtml(report.csslint, Object.assign({}, options, { indentLevel: options.indentLevel + 1 }));
-      })
-      .then(function(reportOutput) {
-        output += reportOutput;
+        output += '<html>';
+        output += '<head>';
+        output += '<meta charset="UTF-8" />';
+        output += '<meta name="viewport" content="width=device-width, initial-scale=1">';
+        output += '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">';
+        output += '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">';
+        output += '<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>';
+        output += '<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>';
+        output += '</head>';
+        output += '<body>';
+        output += '<main class="container-fluid">';
+        output += '<header><h1>Webpage Report</h1></header>';
+        output += '<p>' + report.context + '</p>';
       })
       .then(function(){
-        return validateLinkedResourcePathsReporter.convertReportToHtml(report.resources, Object.assign({}, options, { indentLevel: options.indentLevel + 1 }));
-      })
-      .then(function(reportOutput) {
-        output += reportOutput;
+        //create tabs
+        output += '<ul class="nav nav-tabs" role="tablist">';
       })
       .then(function(){
-        return screenshotsReporter.convertReportToHtml(report.screenshots, Object.assign({}, options, { indentLevel: options.indentLevel + 1 }));
+        //tab with live view of website
+        output += '<li role="presentation" class="active"><a href="#live-view" aria-controls="live-view" role="tab" data-toggle="tab">Live View</a></li>';
       })
-      .then(function(reportOutput) {
-        output += reportOutput;
+      .then(function(){
+        //tabs for the source files
+        report.resources.results.forEach(function(resourceReport){
+          if(resourceReport.source) {
+            var name = path.basename(resourceReport.source);
+            output += '<li><a href="#view-source-' + resourceReport.nr + '" aria-controls="view-source-' + resourceReport.nr + '" role="tab" data-toggle="tab">' + name + '</a></li>';
+          }
+        });
+      })
+      .then(function(){
+        //tabs for the reporters
+        reporters.forEach(function(reporterConfig){
+          output += '<li><a href="#' + reporterConfig.name + '" aria-controls="' + reporterConfig.name + '" role="tab" data-toggle="tab">' + reporterConfig.title + '</a></li>';
+        });
+      })
+      .then(function(){
+        output += '</ul>';
+      })
+      .then(function(){
+        output += '<div class="tab-content">';
+      })
+      .then(function(){
+        //tab for live view
+        output += '<div role="tabpanel" class="tab-pane active" id="live-view">';
+        output += '<iframe width="100%" height="600" src="' + report.context + '"></iframe>';
+        output += '</div>';
+      })
+      .then(function(){
+        //tabs for the source files
+        var resourceTabsSequence = Promise.resolve();
+        report.resources.results.forEach(function(resourceReport){
+          if(resourceReport.source) {
+            resourceTabsSequence = resourceTabsSequence.then(function(){
+              var name = path.basename(resourceReport.source);
+              output += '<div role="tabpanel" class="tab-pane" id="view-source-' + resourceReport.nr + '">';
+            })
+            .then(function(){
+              //read the file contents and echo it here
+              return fsUtils.loadResource(resourceReport.source, 'utf-8');
+            })
+            .then(function(contents){
+              var src = '<textarea style="width: 100%; height: 600px;">{{code}}</textarea>';
+              var template = require('handlebars').compile(src);
+              output += template({code: contents});
+            })
+            .then(function(){
+              output += '</div>';
+            });
+          }
+        });
+        return resourceTabsSequence;
+      })
+      .then(function(){
+        var reportersSequence = Promise.resolve();
+        reporters.forEach(function(reporterConfig) {
+          reportersSequence = reportersSequence.then(function(){
+            return reporterConfig.method(reporterConfig.report, Object.assign({}, options, { indentLevel: options.indentLevel + 1 }));
+          }).then(function(reportOutput){
+            output += '<div role="tabpanel" class="tab-pane" id="' + reporterConfig.name + '">';
+            output += reportOutput;
+            output += '</div>';
+          });
+        });
+        return reportersSequence;
+      })
+      .then(function(){
+        output += '</div>';
       })
       .then(function(){
         output += '</main></body></html>';
