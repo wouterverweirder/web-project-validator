@@ -1,0 +1,23 @@
+<section>
+  <header>
+    <h1 class="h{{indentLevel}}">
+      Screenshots
+    </h1>
+  </header>
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#live-view" aria-controls="live-view" role="tab" data-toggle="tab">Live View</a></li>
+    {{#each screenshots}}
+    <li role="presentation"><a href="#{{browserName}}-screenshot" aria-controls="{{browserName}}-screenshot" role="tab" data-toggle="tab">{{browserName}}</a></li>
+    {{/each}}
+  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="live-view">
+      <iframe width="100%" height="600" src="{{context}}"></iframe>
+    </div>
+  {{#each screenshots}}
+  <article role="tabpanel" class="tab-pane" id="{{browserName}}-screenshot">
+    <img src="{{url}}" style="max-width: 100%" alt="screenshot {{browserName}}" />
+  </article>
+  {{/each}}
+  </div>
+</section>

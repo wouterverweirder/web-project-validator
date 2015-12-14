@@ -8,6 +8,7 @@ var lintLinkedCssFilesReporter = require('./lib/reporter/lint-linked-css-files')
 var outlineHtmlReporter = require('./lib/reporter/outline-html');
 var validateHtmlReporter = require('./lib/reporter/validate-html');
 var validateLinkedResourcePathsReporter = require('./lib/reporter/validate-linked-resource-paths');
+var screenshotsReporter = require('./lib/reporter/screenshots');
 
 var generateIndent = require('./lib/indent_utils').generateIndent;
 var getHtmlFilesFromDirectory = require('./lib/fs_utils').getHtmlFilesFromDirectory;
@@ -107,6 +108,9 @@ var buildReport = function(report) {
         return fillReportWithBasicFileReports(report);
       })
       .then(function(){
+        return createOutputFoldersForReport(report);
+      })
+      .then(function(){
         return require('./lib/phantom-processor').buildReport(report);
       })
       .then(function(){
@@ -117,6 +121,9 @@ var buildReport = function(report) {
       })
       .then(function(){
         return require('./lib/resource-processor').buildReport(report);
+      })
+      .then(function(){
+        return require('./lib/firefox-processor').buildReport(report);
       })
       .catch(function(error){
         console.log(error);
@@ -133,7 +140,10 @@ var fillReportWithBasicFileReports = function(report) {
     report.reportsByFile[htmlFilePath] = {
       context: htmlFilePath,
       outputFolder: path.resolve(outputFolder, path.relative(report.inputFolder, htmlFilePath)),
-      screenshots: {},
+      screenshots: {
+        context: htmlFilePath,
+        screenshots: []
+      },
       styleSheetPaths: [],
       resourcePaths: [],
       outline: {
@@ -153,6 +163,33 @@ var fillReportWithBasicFileReports = function(report) {
     };
   });
   return report;
+};
+
+var createOutputFoldersForReport = function(report) {
+  var seq = Promise.resolve();
+  report.htmlFilePaths.forEach(function(htmlFilePath){
+    seq = seq.then(function(){
+      var fileReport = report.reportsByFile[htmlFilePath];
+      return createOutputFolderForFileReport(fileReport);
+    }).catch(function(error){
+      console.log(error);
+    });
+  });
+  return seq;
+};
+
+var createOutputFolderForFileReport = function(fileReport) {
+  return new Promise(function(resolve, reject){
+    if(!fileReport.outputFolder) {
+      return resolve();
+    }
+    mkdirp(fileReport.outputFolder, function(error){
+      if(error) {
+        return reject(error);
+      }
+      resolve();
+    });
+  });
 };
 
 var generateReportOutput = function(report, options) {
@@ -236,6 +273,15 @@ var generateTextReport = function(report, options) {
         output += reportOutput;
       })
       .then(function(){
+        return screenshotsReporter.convertReportToPlainText(report.screenshots, Object.assign({}, options, { indentLevel: options.indentLevel + 1 }));
+      })
+      .catch(function(error){
+        console.log('screenshotsReporter error: ' + error);
+      })
+      .then(function(reportOutput) {
+        output += reportOutput;
+      })
+      .then(function(){
         resolve(output);
       })
       .catch(function(error){
@@ -288,6 +334,12 @@ var generateHtmlReport = function(report, options) {
       })
       .then(function(){
         return validateLinkedResourcePathsReporter.convertReportToHtml(report.resources, Object.assign({}, options, { indentLevel: options.indentLevel + 1 }));
+      })
+      .then(function(reportOutput) {
+        output += reportOutput;
+      })
+      .then(function(){
+        return screenshotsReporter.convertReportToHtml(report.screenshots, Object.assign({}, options, { indentLevel: options.indentLevel + 1 }));
       })
       .then(function(reportOutput) {
         output += reportOutput;
