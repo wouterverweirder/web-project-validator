@@ -199,7 +199,7 @@ var generateReportOutput = function(report, options) {
     reportFileName = 'report.txt';
     seq = seq.then(function() { return generateTextReport(report, options); });
   } else {
-    reportFileName = 'index.html';
+    reportFileName = 'report.html';
     seq = seq.then(function() { return generateHtmlReport(report, options); });
   }
   seq = seq.then(function(output){
