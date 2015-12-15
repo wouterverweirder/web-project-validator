@@ -44,14 +44,23 @@ var processInput = function(argv) {
 var generateOutput = function(report) {
   return new Promise(function(resolve, reject){
     var seq = Promise.resolve();
+    var reportFilePaths = [];
     report.htmlFilePaths.forEach(function(htmlFilePath){
       seq = seq.then(function(){
         var fileReport = report.reportsByFile[htmlFilePath];
         return generateReportOutput(fileReport, { outputFolderForThisFile: fileReport.outputFolder });
-      }).catch(function(error){
+      })
+      .then(function(reportFilePath){
+        console.log('wrote report: ' + reportFilePath);
+        reportFilePaths.push(reportFilePath);
+      })
+      .catch(function(error){
         console.log(error);
       });
     });
+    seq.then(function(){
+      return generateReportIndex(report, reportFilePaths);
+    })
     seq.then(function(){
       resolve();
     });
@@ -214,14 +223,50 @@ var generateReportOutput = function(report, options) {
             if(error) {
               return reject(error);
             }
-            console.log('wrote report: ' + reportFilePath);
-            resolve();
+            resolve(reportFilePath);
           });
         });
       });
     }
   });
   return seq;
+};
+
+var generateReportIndex = function(report, reportFilePaths) {
+  return new Promise(function(resolve, reject){
+    var output = '';
+    Promise.resolve()
+      .then(function(){
+        output += '<html>';
+        output += '<head>';
+        output += '<meta charset="UTF-8" />';
+        output += '<meta name="viewport" content="width=device-width, initial-scale=1">';
+        output += '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">';
+        output += '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">';
+        output += '<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>';
+        output += '<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>';
+        output += '</head>';
+        output += '<body>';
+        output += '<main class="container-fluid">';
+        output += '<header><h1>Reports</h1></header>';
+        output += '<ol>';
+      })
+      .then(function(){
+        reportFilePaths.forEach(function(reportFilePath){
+          output += '<li><a href="' + reportFilePath + '">' + reportFilePath + '</a></li>';
+        });
+      })
+      .then(function(){
+        output += '</ol>';
+        output += '</main></body></html>';
+      })
+      .then(function(){
+        return fsUtils.writeFile(path.resolve(outputFolder, 'reports.html'), output);
+      })
+      .then(function(){
+        resolve();
+      });
+  });
 };
 
 var generateTextReport = function(report, options) {
@@ -320,6 +365,14 @@ var generateHtmlReport = function(report, options) {
         output += '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">';
         output += '<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>';
         output += '<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>';
+        output += '<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.22/require.min.js"></script>';
+        output += '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.9.0/codemirror.min.css" />';
+        output += "<style>\n";
+        output += "   .CodeMirror {\n";
+        output += "        height: 600px;\n";
+        output += "        background: white;\n";
+        output += "    }\n";
+        output += "</style>\n";
         output += '</head>';
         output += '<body>';
         output += '<main class="container-fluid">';
@@ -332,21 +385,21 @@ var generateHtmlReport = function(report, options) {
       })
       .then(function(){
         //tab with live view of website
-        output += '<li role="presentation" class="active"><a href="#live-view" aria-controls="live-view" role="tab" data-toggle="tab">Live View</a></li>';
+        output += '<li role="presentation" class="active"><a href="#" aria-controls="live-view" role="tab">Live View</a></li>';
       })
       .then(function(){
         //tabs for the source files
         report.resources.results.forEach(function(resourceReport){
           if(resourceReport.source) {
             var name = path.basename(resourceReport.source);
-            output += '<li><a href="#view-source-' + resourceReport.nr + '" aria-controls="view-source-' + resourceReport.nr + '" role="tab" data-toggle="tab">' + name + '</a></li>';
+            output += '<li><a href="#view-source-' + resourceReport.nr + '" aria-controls="view-source-' + resourceReport.nr + '" role="tab">' + name + '</a></li>';
           }
         });
       })
       .then(function(){
         //tabs for the reporters
         reporters.forEach(function(reporterConfig){
-          output += '<li><a href="#' + reporterConfig.name + '" aria-controls="' + reporterConfig.name + '" role="tab" data-toggle="tab">' + reporterConfig.title + '</a></li>';
+          output += '<li><a href="#' + reporterConfig.name + '" aria-controls="' + reporterConfig.name + '" role="tab">' + reporterConfig.title + '</a></li>';
         });
       })
       .then(function(){
@@ -357,7 +410,7 @@ var generateHtmlReport = function(report, options) {
       })
       .then(function(){
         //tab for live view
-        output += '<div role="tabpanel" class="tab-pane active" id="live-view">';
+        output += '<div role="tabpanel" class="tab-pane active" data-tab-id="live-view">';
         output += '<iframe width="100%" height="600" src="' + report.context + '"></iframe>';
         output += '</div>';
       })
@@ -368,16 +421,17 @@ var generateHtmlReport = function(report, options) {
           if(resourceReport.source) {
             resourceTabsSequence = resourceTabsSequence.then(function(){
               var name = path.basename(resourceReport.source);
-              output += '<div role="tabpanel" class="tab-pane" id="view-source-' + resourceReport.nr + '">';
+              output += '<div role="tabpanel" class="tab-pane" data-tab-id="view-source-' + resourceReport.nr + '">';
             })
             .then(function(){
               //read the file contents and echo it here
               return fsUtils.loadResource(resourceReport.source, 'utf-8');
             })
             .then(function(contents){
-              var src = '<textarea style="width: 100%; height: 600px;">{{code}}</textarea>';
+              //check mode
+              var src = '<textarea style="width: 100%; height: 600px;" data-mode="{{mode}}">{{code}}</textarea>';
               var template = require('handlebars').compile(src);
-              output += template({code: contents});
+              output += template({code: contents, mode: resourceReport.mode});
             })
             .then(function(){
               output += '</div>';
@@ -392,7 +446,7 @@ var generateHtmlReport = function(report, options) {
           reportersSequence = reportersSequence.then(function(){
             return reporterConfig.method(reporterConfig.report, Object.assign({}, options, { indentLevel: options.indentLevel + 1 }));
           }).then(function(reportOutput){
-            output += '<div role="tabpanel" class="tab-pane" id="' + reporterConfig.name + '">';
+            output += '<div role="tabpanel" class="tab-pane" data-tab-id="' + reporterConfig.name + '">';
             output += reportOutput;
             output += '</div>';
           });
@@ -401,6 +455,12 @@ var generateHtmlReport = function(report, options) {
       })
       .then(function(){
         output += '</div>';
+      })
+      .then(function(){
+        return fsUtils.loadResource(path.resolve(__dirname, 'lib/reporter/script.bottom.hbs'), 'utf-8');
+      })
+      .then(function(bottomScript){
+        output += bottomScript;
       })
       .then(function(){
         output += '</main></body></html>';

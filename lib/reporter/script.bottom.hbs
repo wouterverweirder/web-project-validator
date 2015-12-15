@@ -1,0 +1,61 @@
+<script>
+(function(){
+  require.config({
+    packages: [
+      {
+        name: 'codemirror',
+        location: '//cdnjs.cloudflare.com/ajax/libs/codemirror/4.0.3',
+        main: 'codemirror'
+      }
+    ],
+    map: {
+      'codemirror': {
+        'codemirror/lib/codemirror': 'codemirror'
+      }
+    }
+  });
+  require.config({
+    packages: [{
+      name: "codemirror",
+      location: "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.9.0",
+      main: "codemirror"
+    }]
+  });
+  require(["codemirror", "codemirror/mode/htmlmixed/htmlmixed", "codemirror/mode/css/css",
+         "codemirror/addon/hint/show-hint", "codemirror/addon/hint/html-hint",
+         "codemirror/addon/mode/loadmode"], function(CodeMirror) {
+          init(CodeMirror);
+  });
+
+  function init(CodeMirror) {
+    //create codemirror instances
+    var codeMirrorInstances = [];
+    $('textarea[data-mode]').each(function(index, textarea){
+      var codeMirror = CodeMirror.fromTextArea(textarea, {
+        lineNumbers: true,
+        mode: $(textarea).data('mode'),
+        extraKeys: {"Ctrl-Space": "autocomplete"}
+      });
+      codeMirrorInstances.push(codeMirror);
+    });
+
+
+    //manual manage tabs, as we don't want to work with element ids
+    $('a[role=tab]').click(function (e) {
+      e.preventDefault();
+      var tabId = $(e.target).attr('aria-controls');
+      var $tab = $('[data-tab-id="' + tabId + '"]');
+      $(".nav-tabs .active, .tab-content .active").removeClass("active");
+      $(e.target).closest('li').addClass('active');
+      $tab.addClass("active");
+      codeMirrorInstances.forEach(function(codeMirrorInstance){
+        codeMirrorInstance.refresh();
+      });
+    });
+
+    requestAnimationFrame(function(){
+      $('a[role=tab]').first().click();
+    });
+  };
+})();
+</script>
