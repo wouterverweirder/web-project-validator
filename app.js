@@ -71,13 +71,15 @@ var processInputFile = function(filePath) {
   return new Promise(function(resolve, reject){
     var report = {
       context: filePath,
-      inputType: 'file',
-      inputFolder: path.resolve(filePath, '..'),
-      outputFolder: outputFolder,
-      outputStyle: outputStyle,
-      htmlFilePaths: [filePath]
+      outputStyle: outputStyle
     };
+    var options = { type: 'file' };
     Promise.resolve()
+      .then(function(){
+        var WebProjectValidator = require('./lib');
+        webProjectValidator = new WebProjectValidator();
+        return webProjectValidator.initReport(report, options);
+      })
       .then(function(){
         return buildReport(report);
       })
@@ -91,15 +93,14 @@ var processInputFolder = function(folderPath) {
   return new Promise(function(resolve, reject){
     var report = {
       context: folderPath,
-      inputType: 'folder',
-      inputFolder: path.resolve(folderPath, '.'),
-      outputFolder: outputFolder,
-      outputStyle: outputStyle,
-      htmlFilePaths: []
+      outputStyle: outputStyle
     };
-    getHtmlFilesFromDirectory(folderPath)
-      .then(function(htmlFilePaths){
-        report.htmlFilePaths = htmlFilePaths;
+    var options = { type: 'folder' };
+    Promise.resolve()
+      .then(function(){
+        var WebProjectValidator = require('./lib');
+        webProjectValidator = new WebProjectValidator();
+        return webProjectValidator.initReport(report, options);
       })
       .then(function(){
         return buildReport(report);
@@ -113,9 +114,6 @@ var processInputFolder = function(folderPath) {
 var buildReport = function(report) {
   return new Promise(function(resolve, reject){
     return Promise.resolve()
-      .then(function(){
-        return fillReportWithBasicFileReports(report);
-      })
       .then(function(){
         return createOutputFoldersForReport(report);
       })
