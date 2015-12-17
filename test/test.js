@@ -1,8 +1,9 @@
 var chai = require('chai'),
-  chaiAsPromised = require("chai-as-promised"),
-  path = require('path');
+  path = require('path'),
+  rimraf = require('rimraf');
 
-chai.use(chaiAsPromised);
+chai.use(require('chai-as-promised'));
+chai.use(require('chai-fs'));
 
 var expect = require('chai').expect;
 
@@ -136,6 +137,7 @@ describe('WebProjectValidator', function() {
       var options = { type: 'folder' };
       webProjectValidator._fillReportWithBasicFileReports(report, options);
       expect(report.reportsByFile[testAssetsHtmlFilePaths[0]].outputFolder).to.equal(path.resolve('./output/project_1/index.html'));
+      expect(report.reportsByFile[testAssetsHtmlFilePaths[1]].outputFolder).to.equal(path.resolve('./output/project_2/page_1/page1.html'));
     });
     it('should create a screenshots property in a file report', function() {
       var report = { context: testAssetsPath, htmlFilePaths: testAssetsHtmlFilePaths };
@@ -272,6 +274,61 @@ describe('WebProjectValidator', function() {
       var report = { context: testAssetsPath };
       var options = { type: 'this is some garbage' };
       return expect(webProjectValidator.initReport(report, options)).to.eventually.equal(report);
+    });
+  });
+  describe('#_createOutputFolderForFileReport', function(){
+    var webProjectValidator;
+    beforeEach(function(done){
+      var WebProjectValidator = require('../lib');
+      webProjectValidator = new WebProjectValidator();
+      rimraf(testDefaultOutputPath, done);
+    });
+    it('should create the output folder & intermediary folders for a given file report object', function(){
+      var report = { context: testAssetsPath, htmlFilePaths: testAssetsHtmlFilePaths };
+      var options = { type: 'folder' };
+      webProjectValidator._fillReportWithBasicFileReports(report, options);
+      var fileReport = report.reportsByFile[testAssetsHtmlFilePaths[0]];
+      return expect(webProjectValidator._createOutputFolderForFileReport(fileReport)).to.be.fulfilled.then(function(){
+        //check if folder exists
+        return expect(fileReport.outputFolder).to.be.a.directory();
+      });
+    });
+    afterEach(function(done){
+      rimraf(testDefaultOutputPath, done);
+    });
+  });
+  describe('#createOutputFoldersForReport', function(){
+    var webProjectValidator;
+    beforeEach(function(done){
+      var WebProjectValidator = require('../lib');
+      webProjectValidator = new WebProjectValidator();
+      rimraf(testDefaultOutputPath, done);
+    });
+    it('should create the output folders & intermediary folders for a given report object', function(){
+      var report = { context: testAssetsPath, htmlFilePaths: testAssetsHtmlFilePaths };
+      var options = { type: 'folder' };
+      webProjectValidator._fillReportWithBasicFileReports(report, options);
+      return expect(webProjectValidator.createOutputFoldersForReport(report)).to.be.fulfilled.then(function(){
+        //check if folders exist
+        for(var htmlFilePath in report.reportsByFile) {
+          expect(report.reportsByFile[htmlFilePath].outputFolder).to.be.a.directory();
+        }
+      });
+    });
+    afterEach(function(done){
+      rimraf(testDefaultOutputPath, done);
+    });
+  });
+  describe('#buildReport', function(){
+    var webProjectValidator;
+    beforeEach(function(){
+      var WebProjectValidator = require('../lib');
+      webProjectValidator = new WebProjectValidator();
+    });
+    it('should return the input report object as the finale promise result', function() {
+      var report = { context: testAssetsPath, htmlFilePaths: testAssetsHtmlFilePaths };
+      var options = { type: 'folder' };
+      return expect(webProjectValidator.buildReport(report, options, [])).to.eventually.equal(report);
     });
   });
 });

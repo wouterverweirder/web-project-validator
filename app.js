@@ -13,14 +13,9 @@ var screenshotsReporter = require('./lib/reporter/screenshots');
 var generateIndent = require('./lib/indent_utils').generateIndent;
 var getHtmlFilesFromDirectory = require('./lib/fs_utils').getHtmlFilesFromDirectory;
 
-var outputFolder = './output';
 var outputStyle = 'html';
-// var inputFolder;
 
 var init = function() {
-  if(argv['output-folder']) {
-    outputFolder = argv['output-folder'];
-  }
   if(argv['output-style']) {
     outputStyle = argv['output-style'];
   }
@@ -34,10 +29,46 @@ var init = function() {
 };
 
 var processInput = function(argv) {
+  return new Promise(function(resolve, reject){
+    var report = {
+      outputStyle: outputStyle,
+      context: getContextFromArgv(argv)
+    };
+    var options = {
+      type: getTypeFromArgv(argv),
+      outputFolder: argv['output-folder'] || './output'
+    };
+    var WebProjectValidator = require('./lib');
+    webProjectValidator = new WebProjectValidator();
+    Promise.resolve()
+      .then(function(){
+        return webProjectValidator.initReport(report, options);
+      })
+      .then(function(){
+        return webProjectValidator.createOutputFoldersForReport(report);
+      })
+      .then(function(){
+        return buildReport(report);
+      })
+      .then(function(){
+        resolve(report);
+      });
+  });
+};
+
+var getTypeFromArgv = function(argv) {
   if(argv['input-file']) {
-    return processInputFile(argv['input-file']);
+    return 'file';
   } else if(argv['input-folder']) {
-    return processInputFolder(argv['input-folder']);
+    return 'folder';
+  }
+};
+
+var getContextFromArgv = function(argv) {
+  if(argv['input-file']) {
+    return argv['input-file'];
+  } else if(argv['input-folder']) {
+    return argv['input-folder'];
   }
 };
 
@@ -67,56 +98,9 @@ var generateOutput = function(report) {
   });
 };
 
-var processInputFile = function(filePath) {
-  return new Promise(function(resolve, reject){
-    var report = {
-      context: filePath,
-      outputStyle: outputStyle
-    };
-    var options = { type: 'file' };
-    Promise.resolve()
-      .then(function(){
-        var WebProjectValidator = require('./lib');
-        webProjectValidator = new WebProjectValidator();
-        return webProjectValidator.initReport(report, options);
-      })
-      .then(function(){
-        return buildReport(report);
-      })
-      .then(function(){
-        resolve(report);
-      });
-  });
-};
-
-var processInputFolder = function(folderPath) {
-  return new Promise(function(resolve, reject){
-    var report = {
-      context: folderPath,
-      outputStyle: outputStyle
-    };
-    var options = { type: 'folder' };
-    Promise.resolve()
-      .then(function(){
-        var WebProjectValidator = require('./lib');
-        webProjectValidator = new WebProjectValidator();
-        return webProjectValidator.initReport(report, options);
-      })
-      .then(function(){
-        return buildReport(report);
-      })
-      .then(function(){
-        resolve(report);
-      });
-  });
-};
-
 var buildReport = function(report) {
   return new Promise(function(resolve, reject){
     return Promise.resolve()
-      .then(function(){
-        return createOutputFoldersForReport(report);
-      })
       .then(function(){
         return require('./lib/phantom-processor').buildReport(report);
       })
@@ -138,64 +122,6 @@ var buildReport = function(report) {
       .then(function(report){
         resolve(report);
       });
-  });
-};
-
-var fillReportWithBasicFileReports = function(report) {
-  report.reportsByFile = {};
-  report.htmlFilePaths.forEach(function(htmlFilePath){
-    report.reportsByFile[htmlFilePath] = {
-      context: htmlFilePath,
-      outputFolder: path.resolve(outputFolder, path.relative(report.inputFolder, htmlFilePath)),
-      screenshots: {
-        context: htmlFilePath,
-        screenshots: []
-      },
-      styleSheetPaths: [],
-      resourcePaths: [],
-      outline: {
-        context: htmlFilePath
-      },
-      validator: {
-        context: htmlFilePath
-      },
-      csslint: {
-        context: htmlFilePath,
-        results: []
-      },
-      resources: {
-        context: htmlFilePath,
-        results: []
-      }
-    };
-  });
-  return report;
-};
-
-var createOutputFoldersForReport = function(report) {
-  var seq = Promise.resolve();
-  report.htmlFilePaths.forEach(function(htmlFilePath){
-    seq = seq.then(function(){
-      var fileReport = report.reportsByFile[htmlFilePath];
-      return createOutputFolderForFileReport(fileReport);
-    }).catch(function(error){
-      console.log(error);
-    });
-  });
-  return seq;
-};
-
-var createOutputFolderForFileReport = function(fileReport) {
-  return new Promise(function(resolve, reject){
-    if(!fileReport.outputFolder) {
-      return resolve();
-    }
-    mkdirp(fileReport.outputFolder, function(error){
-      if(error) {
-        return reject(error);
-      }
-      resolve();
-    });
   });
 };
 
@@ -259,7 +185,7 @@ var generateReportIndex = function(report, reportFilePaths) {
         output += '</main></body></html>';
       })
       .then(function(){
-        return fsUtils.writeFile(path.resolve(outputFolder, 'reports.html'), output);
+        return fsUtils.writeFile(path.resolve(report.outputFolder, 'reports.html'), output);
       })
       .then(function(){
         resolve();
