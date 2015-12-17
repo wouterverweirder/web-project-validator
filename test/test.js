@@ -304,6 +304,11 @@ describe('WebProjectValidator', function() {
       webProjectValidator = new WebProjectValidator();
       rimraf(testDefaultOutputPath, done);
     });
+    it('should return the input report object as the finale promise result', function() {
+      var report = { context: testAssetsPath, htmlFilePaths: testAssetsHtmlFilePaths };
+      var options = { type: 'folder' };
+      return expect(webProjectValidator.createOutputFoldersForReport(report, options, [])).to.eventually.equal(report);
+    });
     it('should create the output folders & intermediary folders for a given report object', function(){
       var report = { context: testAssetsPath, htmlFilePaths: testAssetsHtmlFilePaths };
       var options = { type: 'folder' };
@@ -336,8 +341,75 @@ describe('WebProjectValidator', function() {
 describe('fs_utils', function(){
   describe('#getHtmlFilesFromDirectory()', function(){
     it('should return all the html files inside a given directory & its subdirectories', function(){
-      var fsUtils = require('../lib/fs_utils');
-      return expect(fsUtils.getHtmlFilesFromDirectory(testAssetsPath)).to.eventually.eql(testAssetsHtmlFilePaths);
+      return expect(require('../lib/fs_utils').getHtmlFilesFromDirectory(testAssetsPath)).to.eventually.eql(testAssetsHtmlFilePaths);
+    });
+  });
+  describe('#loadResource()', function(){
+    it('should load a url', function(){
+      this.timeout(0);
+      return expect(require('../lib/fs_utils').loadResource(testUrl, 'utf-8')).to.be.fulfilled.then(function(fileContents){
+        expect(fileContents).to.contain('<title>About - Wouter Verweirder</title>');
+      });
+    });
+  });
+});
+
+describe('phantom-processor', function() {
+  var webProjectValidator;
+  beforeEach(function(done){
+    var WebProjectValidator = require('../lib');
+    webProjectValidator = new WebProjectValidator();
+    rimraf(testDefaultOutputPath, done);
+  });
+  afterEach(function(done){
+    rimraf(testDefaultOutputPath, done);
+  });
+  it('should fill a report for an online url', function(){
+    this.timeout(0);
+    var report = { context: testUrl };
+    var options = { type: 'url' };
+    return expect(webProjectValidator.initReport(report, options)).to.be.fulfilled.then(function(){
+      return webProjectValidator.createOutputFoldersForReport(report);
+    }).then(function(){
+      return require('../lib/phantom-processor').buildReport(report);
+    }).then(function(){
+      var fileReport = report.reportsByFile[testUrl];
+      //check resource paths
+      expect(fileReport.resourcePaths).to.contain('http://blog.aboutme.be/stylesheets/screen.css');
+      expect(fileReport.resourcePaths).to.contain('http://blog.aboutme.be/javascripts/modernizr-2.0.js');
+      expect(fileReport.resourcePaths).to.contain('http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js');
+      //check screenshot
+      expect(fileReport.screenshots.screenshots).to.have.length(1);
+      expect(fileReport.screenshots.screenshots[0].browserName).to.equal('phantomjs');
+      expect(fileReport.screenshots.screenshots[0].url).to.equal(path.resolve(fileReport.outputFolder, 'phantomjs.png'));
+      expect(fileReport.screenshots.screenshots[0].url).to.be.a.file();
+    });
+  });
+});
+
+describe('jsdom-processor', function() {
+  var webProjectValidator;
+  beforeEach(function(done){
+    var WebProjectValidator = require('../lib');
+    webProjectValidator = new WebProjectValidator();
+    rimraf(testDefaultOutputPath, done);
+  });
+  afterEach(function(done){
+    rimraf(testDefaultOutputPath, done);
+  });
+  it('should fill a report for an online url', function(){
+    this.timeout(0);
+    var report = { context: testUrl };
+    var options = { type: 'url' };
+    return expect(webProjectValidator.initReport(report, options)).to.be.fulfilled.then(function(){
+      return webProjectValidator.createOutputFoldersForReport(report);
+    }).then(function(){
+      return require('../lib/jsdom-processor').buildReport(report);
+    }).then(function(){
+      var fileReport = report.reportsByFile[testUrl];
+      expect(fileReport.styleSheetPaths).to.contain('http://blog.aboutme.be/stylesheets/screen.css');
+      expect(fileReport.styleSheetPaths).to.contain('http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic');
+      expect(fileReport.styleSheetPaths).to.contain('http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic');
     });
   });
 });

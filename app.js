@@ -61,6 +61,8 @@ var getTypeFromArgv = function(argv) {
     return 'file';
   } else if(argv['input-folder']) {
     return 'folder';
+  } else if(argv['input-url']) {
+    return 'url';
   }
 };
 
@@ -69,6 +71,8 @@ var getContextFromArgv = function(argv) {
     return argv['input-file'];
   } else if(argv['input-folder']) {
     return argv['input-folder'];
+  } else if(argv['input-url']) {
+    return argv['input-url'];
   }
 };
 
