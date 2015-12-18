@@ -352,6 +352,34 @@ describe('fs_utils', function(){
       });
     });
   });
+  describe('#pathIsRemoteUrl', function(){
+    it('should return false when specifying a path without protocl', function(){
+      expect(require('../lib/fs_utils').pathIsRemoteUrl('/Applications/Utilities/')).to.be.false;
+    });
+    it('should return false when specifying a local url (file:///)', function(){
+      expect(require('../lib/fs_utils').pathIsRemoteUrl('file:////Applications/Utilities/')).to.be.false;
+    });
+    it('should return true when specifying a http url', function(){
+      expect(require('../lib/fs_utils').pathIsRemoteUrl('http://aboutme.be')).to.be.true;
+    });
+    it('should return true when specifying a https url', function(){
+      expect(require('../lib/fs_utils').pathIsRemoteUrl('https://devine.be')).to.be.true;
+    });
+  });
+  describe('#pathHasProtocol', function(){
+    it('should return false when specifying a path without protocol', function(){
+      expect(require('../lib/fs_utils').pathHasProtocol('/Applications/Utilities/')).to.be.false;
+    });
+    it('should return true when specifying a local url (file:///)', function(){
+      expect(require('../lib/fs_utils').pathHasProtocol('file:////Applications/Utilities/')).to.be.true;
+    });
+    it('should return true when specifying a http url', function(){
+      expect(require('../lib/fs_utils').pathHasProtocol('http://aboutme.be')).to.be.true;
+    });
+    it('should return true when specifying a https url', function(){
+      expect(require('../lib/fs_utils').pathHasProtocol('https://devine.be')).to.be.true;
+    });
+  });
 });
 
 describe('phantom-processor', function() {
