@@ -92,3 +92,17 @@ This will scan a folder recursively, and create a report on every html file it f
 ```
 $ node app.js --input-folder path/to/the/folder
 ```
+
+### Get a report on a url
+
+```
+$ node app.js --input-url https://github.com
+```
+
+### Use the offline w3c validator instead of the online validator
+
+If you send too many requests to the online validator, you will be blocked for an hour. In those cases you could use the offline, java-based validator:
+
+```
+$ node app.js --input-file path/to/the/html/file --html-validator offline
+```

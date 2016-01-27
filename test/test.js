@@ -441,3 +441,28 @@ describe('jsdom-processor', function() {
     });
   });
 });
+
+describe('w3cjs-processor', function() {
+  var webProjectValidator;
+  beforeEach(function(done){
+    var WebProjectValidator = require('../lib');
+    webProjectValidator = new WebProjectValidator();
+    rimraf(testDefaultOutputPath, done);
+  });
+  afterEach(function(done){
+    rimraf(testDefaultOutputPath, done);
+  });
+  it('should fill a report for an online url', function(){
+    this.timeout(0);
+    var report = { context: testUrl };
+    var options = { type: 'url' };
+    return expect(webProjectValidator.initReport(report, options)).to.be.fulfilled.then(function(){
+      return webProjectValidator.createOutputFoldersForReport(report);
+    }).then(function(){
+      return require('../lib/w3cjs-processor').buildReport(report);
+    }).then(function(){
+      var fileReport = report.reportsByFile[testUrl];
+      console.log(fileReport);
+    });
+  });
+});

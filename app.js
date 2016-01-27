@@ -32,7 +32,8 @@ var processInput = function(argv) {
   return new Promise(function(resolve, reject){
     var report = {
       outputStyle: outputStyle,
-      context: getContextFromArgv(argv)
+      context: getContextFromArgv(argv),
+      htmlValidator: getHtmlValidatorFromArgv(argv)
     };
     var options = {
       type: getTypeFromArgv(argv),
@@ -76,6 +77,15 @@ var getContextFromArgv = function(argv) {
   }
 };
 
+var getHtmlValidatorFromArgv = function(argv) {
+  if(argv['html-validator']) {
+    if(argv['html-validator'] === 'offline') {
+      return argv['html-validator'];
+    }
+  }
+  return 'online';
+};
+
 var generateOutput = function(report) {
   return new Promise(function(resolve, reject){
     var seq = Promise.resolve();
@@ -112,7 +122,11 @@ var buildReport = function(report) {
         return require('./lib/jsdom-processor').buildReport(report);
       })
       .then(function(){
-        return require('./lib/vnu-processor').buildReport(report);
+        if(report.htmlValidator === 'offline') {
+          return require('./lib/vnu-processor').buildReport(report);
+        } else {
+          return require('./lib/w3cjs-processor').buildReport(report);
+        }
       })
       .then(function(){
         return require('./lib/resource-processor').buildReport(report);
