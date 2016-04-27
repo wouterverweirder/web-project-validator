@@ -396,87 +396,87 @@ describe('fs_utils', function(){
   });
 });
 
-// describe('phantom-processor', function() {
-//   var webProjectValidator;
-//   beforeEach(function(done){
-//     var WebProjectValidator = require('../lib');
-//     webProjectValidator = new WebProjectValidator();
-//     rimraf(testDefaultOutputPath, done);
-//   });
-//   afterEach(function(done){
-//     rimraf(testDefaultOutputPath, done);
-//   });
-//   it('should fill a report for an online url', function(){
-//     this.timeout(0);
-//     var report = { context: testUrl };
-//     var options = { type: 'url' };
-//     return expect(webProjectValidator.initReport(report, options)).to.be.fulfilled.then(function(){
-//       return webProjectValidator.createOutputFoldersForReport(report);
-//     }).then(function(){
-//       return require('../lib/phantom-processor').buildReport(report);
-//     }).then(function(){
-//       var fileReport = report.reportsByFile[testUrl];
-//       //check resource paths
-//       expect(fileReport.resourcePaths).to.contain('http://blog.aboutme.be/stylesheets/screen.css');
-//       expect(fileReport.resourcePaths).to.contain('http://blog.aboutme.be/javascripts/modernizr-2.0.js');
-//       expect(fileReport.resourcePaths).to.contain('http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js');
-//       //check screenshot
-//       expect(fileReport.screenshots.screenshots).to.have.length(1);
-//       expect(fileReport.screenshots.screenshots[0].browserName).to.equal('phantomjs');
-//       expect(fileReport.screenshots.screenshots[0].url).to.equal(path.resolve(fileReport.outputFolder, 'phantomjs.png'));
-//       expect(fileReport.screenshots.screenshots[0].url).to.be.a.file();
-//     });
-//   });
-// });
+describe('phantom-processor', function() {
+  var webProjectValidator;
+  beforeEach(function(done){
+    var WebProjectValidator = require('../lib');
+    webProjectValidator = new WebProjectValidator();
+    rimraf(testDefaultOutputPath, done);
+  });
+  afterEach(function(done){
+    rimraf(testDefaultOutputPath, done);
+  });
+  it('should fill a report for an online url', function(){
+    this.timeout(0);
+    var report = { context: testUrl };
+    var options = { type: 'url' };
+    return expect(webProjectValidator.initReport(report, options)).to.be.fulfilled.then(function(){
+      return webProjectValidator.createOutputFoldersForReport(report);
+    }).then(function(){
+      return require('../lib/phantom-processor').buildReport(report);
+    }).then(function(){
+      var fileReport = report.reportsByFile[testUrl];
+      //check resource paths
+      expect(fileReport.resourcePaths).to.contain('http://blog.aboutme.be/stylesheets/screen.css');
+      expect(fileReport.resourcePaths).to.contain('http://blog.aboutme.be/javascripts/modernizr-2.0.js');
+      expect(fileReport.resourcePaths).to.contain('http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js');
+      //check screenshot
+      expect(fileReport.screenshots.screenshots).to.have.length(1);
+      expect(fileReport.screenshots.screenshots[0].browserName).to.equal('phantomjs');
+      expect(fileReport.screenshots.screenshots[0].url).to.equal(path.resolve(fileReport.outputFolder, 'phantomjs.png'));
+      expect(fileReport.screenshots.screenshots[0].url).to.be.a.file();
+    });
+  });
+});
 
-// describe('jsdom-processor', function() {
-//   var webProjectValidator;
-//   beforeEach(function(done){
-//     var WebProjectValidator = require('../lib');
-//     webProjectValidator = new WebProjectValidator();
-//     rimraf(testDefaultOutputPath, done);
-//   });
-//   afterEach(function(done){
-//     rimraf(testDefaultOutputPath, done);
-//   });
-//   it('should fill a report for an online url', function(){
-//     this.timeout(0);
-//     var report = { context: testUrl };
-//     var options = { type: 'url' };
-//     return expect(webProjectValidator.initReport(report, options)).to.be.fulfilled.then(function(){
-//       return webProjectValidator.createOutputFoldersForReport(report);
-//     }).then(function(){
-//       return require('../lib/jsdom-processor').buildReport(report);
-//     }).then(function(){
-//       var fileReport = report.reportsByFile[testUrl];
-//       expect(fileReport.styleSheetPaths).to.contain('http://blog.aboutme.be/stylesheets/screen.css');
-//       expect(fileReport.styleSheetPaths).to.contain('http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic');
-//       expect(fileReport.styleSheetPaths).to.contain('http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic');
-//     });
-//   });
-// });
+describe('jsdom-processor', function() {
+  var webProjectValidator;
+  beforeEach(function(done){
+    var WebProjectValidator = require('../lib');
+    webProjectValidator = new WebProjectValidator();
+    rimraf(testDefaultOutputPath, done);
+  });
+  afterEach(function(done){
+    rimraf(testDefaultOutputPath, done);
+  });
+  it('should fill a report for an online url', function(){
+    this.timeout(0);
+    var report = { context: testUrl };
+    var options = { type: 'url' };
+    return expect(webProjectValidator.initReport(report, options)).to.be.fulfilled.then(function(){
+      return webProjectValidator.createOutputFoldersForReport(report);
+    }).then(function(){
+      return require('../lib/jsdom-processor').buildReport(report);
+    }).then(function(){
+      var fileReport = report.reportsByFile[testUrl];
+      expect(fileReport.styleSheetPaths).to.contain('http://blog.aboutme.be/stylesheets/screen.css');
+      expect(fileReport.styleSheetPaths).to.contain('http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic');
+      expect(fileReport.styleSheetPaths).to.contain('http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic');
+    });
+  });
+});
 
-// describe('w3cjs-processor', function() {
-//   var webProjectValidator;
-//   beforeEach(function(done){
-//     var WebProjectValidator = require('../lib');
-//     webProjectValidator = new WebProjectValidator();
-//     rimraf(testDefaultOutputPath, done);
-//   });
-//   afterEach(function(done){
-//     rimraf(testDefaultOutputPath, done);
-//   });
-//   it('should fill a report for an online url', function(){
-//     this.timeout(0);
-//     var report = { context: testUrl };
-//     var options = { type: 'url' };
-//     return expect(webProjectValidator.initReport(report, options)).to.be.fulfilled.then(function(){
-//       return webProjectValidator.createOutputFoldersForReport(report);
-//     }).then(function(){
-//       return require('../lib/w3cjs-processor').buildReport(report);
-//     }).then(function(){
-//       var fileReport = report.reportsByFile[testUrl];
-//       console.log(fileReport);
-//     });
-//   });
-// });
+describe('w3cjs-processor', function() {
+  var webProjectValidator;
+  beforeEach(function(done){
+    var WebProjectValidator = require('../lib');
+    webProjectValidator = new WebProjectValidator();
+    rimraf(testDefaultOutputPath, done);
+  });
+  afterEach(function(done){
+    rimraf(testDefaultOutputPath, done);
+  });
+  it('should fill a report for an online url', function(){
+    this.timeout(0);
+    var report = { context: testUrl };
+    var options = { type: 'url' };
+    return expect(webProjectValidator.initReport(report, options)).to.be.fulfilled.then(function(){
+      return webProjectValidator.createOutputFoldersForReport(report);
+    }).then(function(){
+      return require('../lib/w3cjs-processor').buildReport(report);
+    }).then(function(){
+      var fileReport = report.reportsByFile[testUrl];
+      console.log(fileReport);
+    });
+  });
+});
