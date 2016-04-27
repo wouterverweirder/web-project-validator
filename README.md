@@ -99,6 +99,14 @@ $ node app.js --input-folder path/to/the/folder
 $ node app.js --input-url https://github.com
 ```
 
+### Get a report on a list of urls
+
+This will validate the urls specified in a given file. Urls inside this file are separated by enters.
+
+```
+$ node app.js --input-list urls.txt
+```
+
 ### Use the offline w3c validator instead of the online validator
 
 If you send too many requests to the online validator, you will be blocked for an hour. In those cases you could use the offline, java-based validator:
