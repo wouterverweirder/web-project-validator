@@ -45,9 +45,20 @@
       e.preventDefault();
       var tabId = $(e.target).attr('aria-controls');
       var $tab = $('[data-tab-id="' + tabId + '"]');
-      $(".nav-tabs .active, .tab-content .active").removeClass("active");
+
+      var $navTabs = $(e.currentTarget).parents('.nav-tabs');
+      $navTabs.find('.active').removeClass('active');
+
+      $navTabs.find('[aria-controls]').each(function(i, tabLink){
+        var tabLinkTargetId = $(tabLink).attr('aria-controls');
+        var $tabLinkTarget = $('[data-tab-id="' + tabLinkTargetId + '"]');
+        $tabLinkTarget.removeClass('active');
+      });
+
+      // $(".nav-tabs .active, .tab-content .active").removeClass("active");
       $(e.target).closest('li').addClass('active');
       $tab.addClass("active");
+
       codeMirrorInstances.forEach(function(codeMirrorInstance){
         codeMirrorInstance.refresh();
       });
