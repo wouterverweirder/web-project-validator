@@ -11,7 +11,15 @@ Analyse an html project automatically and get a report with info on:
 
 ## Installation
 
-The validator runs on node 4+. There are some additional dependencies:
+The validator runs on node 4+. There are 2 additional dependencies:
+
+### PhantomJS
+
+PhantomJS needs to be installed globally:
+
+```
+$ npm install -g phantomjs-prebuilt
+```
 
 ### JDK
 
@@ -46,20 +54,6 @@ On OSX this might be a challenge. These are the steps I followed to update my Ja
   Java(TM) SE Runtime Environment (build 1.8.0_65-b17)
   Java HotSpot(TM) 64-Bit Server VM (build 25.65-b01, mixed mode)
   ```
-
-### NPM installs
-
-Make sure you have phantomjs installed globally:
-
-```
-$ npm install -g phantomjs-prebuilt
-```
-
-After that, just run npm install, to get all the dependencies:
-
-```
-$ npm install
-```
 
 ## Usage
 
