@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "postinstall": "node ./tools/postinstall.js",
     "test": "./node_modules/.bin/mocha"
   },
   "keywords": [],
@@ -11,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "csslint": "^0.10.0",
+    "glob": "^7.1.1",
     "h5o": "^0.11.3",
     "handlebars": "^4.0.5",
     "jsdom": "^8.4.0",
@@ -21,6 +23,7 @@
     "validator-nu": "^2.1.15",
     "w3cjs": "^0.3.0",
     "webdriverio": "^4.0.5",
+    "xml2js": "^0.4.17",
     "yargs": "^6.4.0"
   },
   "devDependencies": {

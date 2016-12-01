@@ -11,11 +11,11 @@ Analyse an html project automatically and get a report with info on:
 
 ## Installation
 
-The validator runs on node 4.x. There are some additional dependencies:
+The validator runs on node 4+. There are some additional dependencies:
 
 ### JDK
 
-You will need a recent version of JAVA, as the offline w3c validator depends on that.
+You will need a recent version of JAVA, as both Selenium and the offline w3c validator depends on that.
 On OSX this might be a challenge. These are the steps I followed to update my Java version:
 
 1. Download the latest JDK version on http://www.oracle.com/technetwork/java/javase/downloads/index.html
@@ -45,22 +45,6 @@ On OSX this might be a challenge. These are the steps I followed to update my Ja
   java version "1.8.0_65"
   Java(TM) SE Runtime Environment (build 1.8.0_65-b17)
   Java HotSpot(TM) 64-Bit Server VM (build 25.65-b01, mixed mode)
-  ```
-
-### Selenium
-
-You will need to have selenium server running.
-
-1. Download selenium standalone server
-
-  ```
-  $ curl -O http://selenium-release.storage.googleapis.com/2.48/selenium-server-standalone-2.48.2.jar
-  ```
-
-2. Start selenium server and keep it running in a terminal window
-
-  ```
-  $ java -jar selenium-server-standalone-2.48.2.jar
   ```
 
 ### NPM installs
