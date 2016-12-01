@@ -68,7 +68,7 @@ You will need to have selenium server running.
 Make sure you have phantomjs installed globally:
 
 ```
-$ npm install -g phantomjs
+$ npm install -g phantomjs-prebuilt
 ```
 
 After that, just run npm install, to get all the dependencies:
@@ -79,10 +79,16 @@ $ npm install
 
 ## Usage
 
+### Get a report on a url
+
+```
+$ node app.js https://github.com
+```
+
 ### Get a report on one html file
 
 ```
-$ node app.js --input-file path/to/the/html/file
+$ node app.js path/to/the/html/file --input-type=file
 ```
 
 ### Get a report on a folder
@@ -90,13 +96,7 @@ $ node app.js --input-file path/to/the/html/file
 This will scan a folder recursively, and create a report on every html file it finds inside that folder and its subfolders.
 
 ```
-$ node app.js --input-folder path/to/the/folder
-```
-
-### Get a report on a url
-
-```
-$ node app.js --input-url https://github.com
+$ node app.js path/to/the/folder --input-type=folder
 ```
 
 ### Get a report on a list of urls
@@ -104,7 +104,7 @@ $ node app.js --input-url https://github.com
 This will validate the urls specified in a given file. Urls inside this file are separated by enters.
 
 ```
-$ node app.js --input-list urls.txt
+$ node app.js urls.txt --input-type=list
 ```
 
 ### Use the offline w3c validator instead of the online validator
@@ -112,5 +112,5 @@ $ node app.js --input-list urls.txt
 If you send too many requests to the online validator, you will be blocked for an hour. In those cases you could use the offline, java-based validator:
 
 ```
-$ node app.js --input-file path/to/the/html/file --html-validator offline
+$ node app.js https://github.com --html-validator=offline
 ```

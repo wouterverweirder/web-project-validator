@@ -1,5 +1,20 @@
-var argv = require('minimist')(process.argv.slice(2)),
-  fs = require('fs'),
+var argv = require('yargs')
+  .usage('Usage: $0 <input> [options]')
+  .example('$0 http://www.bump-festival.be', 'create a report for the given url')
+  .help('h')
+  .alias('h', 'help')
+  .demand(1)
+  .default('input-type', 'url')
+  .describe('input-type', 'What type is the input (url, file, folder or list)')
+  .default('output-folder', './output')
+  .describe('output-folder', 'Where do you want to save the generated report?')
+  .default('output-style', 'html')
+  .describe('output-style', 'The style of the output report (html or text)')
+  .default('html-validator', 'online')
+  .describe('html-validator', 'Which html validator to use (online or offline)')
+  .argv;
+
+var fs = require('fs'),
   path = require('path'),
   mkdirp = require('mkdirp'),
   fsUtils = require('./lib/fs_utils');
@@ -13,12 +28,9 @@ var screenshotsReporter = require('./lib/reporter/screenshots');
 var generateIndent = require('./lib/indent_utils').generateIndent;
 var getHtmlFilesFromDirectory = require('./lib/fs_utils').getHtmlFilesFromDirectory;
 
-var outputStyle = 'html';
+var outputStyle = argv['output-style'];
 
 var init = function() {
-  if(argv['output-style']) {
-    outputStyle = argv['output-style'];
-  }
   processInput(argv)
     .then(function(report){
       return generateOutput(report);
@@ -32,12 +44,12 @@ var processInput = function(argv) {
   return new Promise(function(resolve, reject){
     var report = {
       outputStyle: outputStyle,
-      context: getContextFromArgv(argv),
-      htmlValidator: getHtmlValidatorFromArgv(argv)
+      context: argv._[0],
+      htmlValidator: argv['html-validator']
     };
     var options = {
-      type: getTypeFromArgv(argv),
-      outputFolder: argv['output-folder'] || './output'
+      type: argv['input-type'],
+      outputFolder: argv['output-folder']
     };
     var WebProjectValidator = require('./lib');
     webProjectValidator = new WebProjectValidator();
@@ -55,39 +67,6 @@ var processInput = function(argv) {
         resolve(report);
       });
   });
-};
-
-var getTypeFromArgv = function(argv) {
-  if(argv['input-file']) {
-    return 'file';
-  } else if(argv['input-folder']) {
-    return 'folder';
-  } else if(argv['input-url']) {
-    return 'url';
-  } else if(argv['input-list']) {
-    return 'list';
-  }
-};
-
-var getContextFromArgv = function(argv) {
-  if(argv['input-file']) {
-    return argv['input-file'];
-  } else if(argv['input-folder']) {
-    return argv['input-folder'];
-  } else if(argv['input-url']) {
-    return argv['input-url'];
-  } else if(argv['input-list']) {
-    return argv['input-list'];
-  }
-};
-
-var getHtmlValidatorFromArgv = function(argv) {
-  if(argv['html-validator']) {
-    if(argv['html-validator'] === 'offline') {
-      return argv['html-validator'];
-    }
-  }
-  return 'online';
 };
 
 var generateOutput = function(report) {

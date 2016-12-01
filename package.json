@@ -1,6 +1,6 @@
 {
   "name": "web-project-validator",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -14,19 +14,20 @@
     "h5o": "^0.11.3",
     "handlebars": "^4.0.5",
     "jsdom": "^8.4.0",
-    "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "node-fetch": "^1.5.1",
     "phantom": "^2.0.10",
+    "phantomjs-prebuilt": "^2.1.13",
     "validator-nu": "^2.1.15",
     "w3cjs": "^0.3.0",
-    "webdriverio": "^4.0.5"
+    "webdriverio": "^4.0.5",
+    "yargs": "^6.4.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "chai-as-promised": "^5.3.0",
-    "chai-fs": "^0.1.0",
-    "mocha": "^2.4.5",
-    "rimraf": "^2.5.2"
+    "chai-as-promised": "^6.0.0",
+    "chai-fs": "^1.0.0",
+    "mocha": "^3.2.0",
+    "rimraf": "^2.5.4"
   }
 }
