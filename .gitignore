@@ -3,3 +3,4 @@
 /output/
 selenium-*.jar
 yarn-error.log
+geckodriver

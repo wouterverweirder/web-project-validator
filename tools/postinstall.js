@@ -61,12 +61,12 @@ const downloadPromised = (remoteUrl, localPath) => {
 const getLatestSeleniumVersionFromTree = xml2jsResult => {
   let latestVersionNr = -1;
   xml2jsResult.ListBucketResult.Contents.forEach(contentsTag => {
-    if(!contentsTag.Key[0] || contentsTag.Key[0].indexOf('2.') !== 0) {
+    if(!contentsTag.Key[0] || contentsTag.Key[0].indexOf('3.') !== 0) {
       return;
     }
     const contentsTagSplit = contentsTag.Key[0].split('/');
     const versionNr = parseFloat(contentsTagSplit[0]);
-    if(versionNr > latestVersionNr) {
+    if(!isNaN(versionNr) && versionNr > latestVersionNr) {
       latestVersionNr = versionNr;
     }
   });
@@ -88,7 +88,7 @@ const getSeleniumStandaloneUrlFromTreeAndVersion = (xml2jsResult, versionNr) => 
 const getContentsTagsForSeleniumVersion = (xml2jsResult, versionNr) => {
   const contentsTags = [];
   xml2jsResult.ListBucketResult.Contents.forEach(contentsTag => {
-    if(!contentsTag.Key[0] || contentsTag.Key[0].indexOf('2.') !== 0) {
+    if(!contentsTag.Key[0] || contentsTag.Key[0].indexOf('3.') !== 0) {
       return;
     }
     const contentsTagSplit = contentsTag.Key[0].split('/');

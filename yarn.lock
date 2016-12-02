@@ -2025,7 +2025,7 @@ wdio-dot-reporter@^0.0.6:
   dependencies:
     babel-runtime "^5.8.25"
 
-webdriverio@^4.0.5:
+webdriverio:
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/webdriverio/-/webdriverio-4.4.0.tgz#f2e3f794c66ee57db8b267a5a0f6b901f6f57769"
   dependencies:
