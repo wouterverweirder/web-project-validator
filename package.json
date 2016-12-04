@@ -20,6 +20,7 @@
     "node-fetch": "^1.5.1",
     "phantom": "^2.0.10",
     "phantomjs-prebuilt": "^2.1.13",
+    "tar.gz": "^1.0.5",
     "validator-nu": "^2.1.15",
     "w3cjs": "^0.3.0",
     "webdriverio": "^4.4.0",
