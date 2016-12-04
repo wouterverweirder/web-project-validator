@@ -7,7 +7,7 @@ chai.use(require('chai-fs'));
 var expect = require('chai').expect;
 
 //change this to the name of your local selenium jar file
-var seleniumBaseName = 'selenium-server-standalone-2.53.1.jar';
+var seleniumBaseName = 'selenium-server-standalone-3.0.1.jar';
 
 describe('selenium', function(){
   var selenium = require('../lib/selenium');
