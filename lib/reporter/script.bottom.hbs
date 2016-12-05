@@ -43,7 +43,8 @@
     //manual manage tabs, as we don't want to work with element ids
     $('a[role=tab]').click(function (e) {
       e.preventDefault();
-      var tabId = $(e.target).attr('aria-controls');
+      var tabId = $(e.currentTarget).attr('aria-controls');
+
       var $tab = $('[data-tab-id="' + tabId + '"]');
 
       var $navTabs = $(e.currentTarget).parents('.nav-tabs');
