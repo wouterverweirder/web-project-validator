@@ -16,7 +16,8 @@ const init = () => {
   var _latestSeleniumUrl,
     _latestSeleniumFilePath,
     _geckoDriverFilePath = path.resolve(__dirname, '..', 'bin', 'geckodriver');
-  getLatestSeleniumStandaloneUrl()
+    Promise.resolve()
+    .then(getLatestSeleniumStandaloneUrl)
     .then(latestSeleniumUrl => {
       _latestSeleniumUrl = latestSeleniumUrl;
       _latestSeleniumFilePath = path.resolve(__dirname, '..', 'bin', path.basename(_latestSeleniumUrl));
@@ -52,6 +53,15 @@ const init = () => {
             return unlinkPromised(archivePath);
           });
         });
+    })
+    //npm run build
+    .then(() => {
+      console.log('compiling custom wdio-screenshot');
+      console.log('wait for pull request https://github.com/zinserjan/wdio-screenshot/pull/49 to be accepted');
+      console.log('until then, we rely on our custom version...');
+      //note: we can remove all babel dependencies from our own repo once this is done.
+      console.log('compiling...')
+      require('child_process').execSync('npm run build', {cwd: path.resolve(__dirname, '..', 'node_modules', 'wdio-screenshot')});
     })
     .then(() => {
       console.log('done');
