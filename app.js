@@ -328,15 +328,11 @@ var generateHtmlReport = function(report, options) {
         reporters.forEach(function(reporterConfig){
           output += '<li><a href="#' + reporterConfig.name + '" aria-controls="' + reporterConfig.name + '" role="tab">';
           output += reporterConfig.title;
-          var numNotifications = 0;
           if(reporterConfig.report.numErrors) {
-            numNotifications += reporterConfig.report.numErrors;
+            output += ' <span class="badge" style="background: red">' + reporterConfig.report.numErrors + '</span>';
           }
           if(reporterConfig.report.numWarnings) {
-            numNotifications += reporterConfig.report.numWarnings;
-          }
-          if(numNotifications > 0) {
-            output += ' <span class="badge" style="background: red">' + numNotifications + '</span>';
+            output += ' <span class="badge" style="background: orange">' + reporterConfig.report.numWarnings + '</span>';
           }
           output += '</a></li>';
         });
