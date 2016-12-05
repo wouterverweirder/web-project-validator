@@ -326,7 +326,19 @@ var generateHtmlReport = function(report, options) {
       .then(function(){
         //tabs for the reporters
         reporters.forEach(function(reporterConfig){
-          output += '<li><a href="#' + reporterConfig.name + '" aria-controls="' + reporterConfig.name + '" role="tab">' + reporterConfig.title + '</a></li>';
+          output += '<li><a href="#' + reporterConfig.name + '" aria-controls="' + reporterConfig.name + '" role="tab">';
+          output += reporterConfig.title;
+          var numNotifications = 0;
+          if(reporterConfig.report.numErrors) {
+            numNotifications += reporterConfig.report.numErrors;
+          }
+          if(reporterConfig.report.numWarnings) {
+            numNotifications += reporterConfig.report.numWarnings;
+          }
+          if(numNotifications > 0) {
+            output += ' <span class="badge" style="background: red">' + numNotifications + '</span>';
+          }
+          output += '</a></li>';
         });
       })
       .then(function(){
