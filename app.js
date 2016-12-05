@@ -225,7 +225,7 @@ var generateTextReport = function(report, options) {
         output += reportOutput;
       })
       .then(function(){
-        return lintLinkedCssFilesReporter.convertReportToPlainText(report.csslint, Object.assign({}, options, { indentLevel: options.indentLevel + 1 }));
+        return lintLinkedCssFilesReporter.convertReportToPlainText(report.stylelint, Object.assign({}, options, { indentLevel: options.indentLevel + 1 }));
       })
       .catch(function(error){
         console.log('lintLinkedCssFilesReporter error: ' + error);
@@ -274,7 +274,7 @@ var generateHtmlReport = function(report, options) {
       { title: 'Screenshots', name: 'screenshots', method: screenshotsReporter.convertReportToHtml, report: report.screenshots },
       { title: 'HTML Validation', name: 'validate-html', method: validateHtmlReporter.convertReportToHtml, report: report.validator },
       { title: 'Outline', name: 'outline-html', method: outlineHtmlReporter.convertReportToHtml, report: report.outline },
-      { title: 'CSS Lint', name: 'lint-css', method: lintLinkedCssFilesReporter.convertReportToHtml, report: report.csslint },
+      { title: 'CSS Lint', name: 'lint-css', method: lintLinkedCssFilesReporter.convertReportToHtml, report: report.stylelint },
       { title: 'Resources', name: 'validate-linked-resource-paths', method: validateLinkedResourcePathsReporter.convertReportToHtml, report: report.resources }
     ];
 

@@ -11,10 +11,10 @@
     <header class="hidden"><h1 class="h{{indentLevel2}}">validation messages</h1></header>
     {{#each messages}}
       <article class="panel panel-{{outputType}}">
-        <header class="panel-heading"><h1 class="panel-title">{{outputType}}</h1></header>
+        <header class="panel-heading"><h1 class="panel-title">{{outputType}}: {{message}}</h1></header>
         <div class="panel-body">
+          <p class="message">{{numMessages}} occurences:</p>
           {{#if evidence}}<p class="evidence"><pre>{{evidence}}</pre></p>{{/if}}
-          <p class="message">{{message}}</p>
         </div>
       </article>
     {{/each}}

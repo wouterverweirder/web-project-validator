@@ -208,24 +208,24 @@ describe('WebProjectValidator', function() {
       expect(report.reportsByFile[testAssetsHtmlFilePaths[0]].outline.context).to.equal(testAssetsHtmlFilePaths[0]);
     });
 
-    it('should create a csslint property in a file report', function() {
+    it('should create a stylelint property in a file report', function() {
       var report = { context: testAssetsPath, htmlFilePaths: testAssetsHtmlFilePaths };
       var options = { type: 'folder' };
       webProjectValidator._fillReportWithBasicFileReports(report, options);
-      expect(report.reportsByFile[testAssetsHtmlFilePaths[0]]).to.have.property('csslint');
-      expect(report.reportsByFile[testAssetsHtmlFilePaths[0]].csslint).to.be.an('object');
+      expect(report.reportsByFile[testAssetsHtmlFilePaths[0]]).to.have.property('stylelint');
+      expect(report.reportsByFile[testAssetsHtmlFilePaths[0]].stylelint).to.be.an('object');
     });
-    it('should set the context property csslint report to the html file path', function() {
+    it('should set the context property stylelint report to the html file path', function() {
       var report = { context: testAssetsPath, htmlFilePaths: testAssetsHtmlFilePaths };
       var options = { type: 'folder' };
       webProjectValidator._fillReportWithBasicFileReports(report, options);
-      expect(report.reportsByFile[testAssetsHtmlFilePaths[0]].csslint.context).to.equal(testAssetsHtmlFilePaths[0]);
+      expect(report.reportsByFile[testAssetsHtmlFilePaths[0]].stylelint.context).to.equal(testAssetsHtmlFilePaths[0]);
     });
-    it('should create an empty array named results in the csslint report', function() {
+    it('should create an empty array named results in the stylelint report', function() {
       var report = { context: testAssetsPath, htmlFilePaths: testAssetsHtmlFilePaths };
       var options = { type: 'folder' };
       webProjectValidator._fillReportWithBasicFileReports(report, options);
-      expect(report.reportsByFile[testAssetsHtmlFilePaths[0]].csslint.results).to.eql([]);
+      expect(report.reportsByFile[testAssetsHtmlFilePaths[0]].stylelint.results).to.eql([]);
     });
     it('should create a resources property in a file report', function() {
       var report = { context: testAssetsPath, htmlFilePaths: testAssetsHtmlFilePaths };
