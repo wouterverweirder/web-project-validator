@@ -1,6 +1,10 @@
 {{#each children}} {{! Each item is an "li" }}
   <li>
-    {{title}}
+    <span{{#if title}}{{else}} style="color: red;"{{/if}}>
+    {{tagName}}
+    {{#if identification}} ({{identification}}){{/if}}
+    : {{#if title}}{{title}}{{else}}UNDEFINED{{/if}}
+    </span>
     {{#if children}} {{! Within the context of the current item }}
       <ol>
         {{> list}} {{! Recursively render the partial }}

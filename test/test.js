@@ -11,7 +11,8 @@ var expect = require('chai').expect;
 var testAssetsPath = path.resolve(__dirname, '..', 'test_assets');
 var testAssetsHtmlFilePaths = [
   path.resolve(testAssetsPath, 'project_1', 'index.html'),
-  path.resolve(testAssetsPath, 'project_2', 'page_1', 'page1.html')
+  path.resolve(testAssetsPath, 'project_2', 'page_1', 'page1.html'),
+  path.resolve(testAssetsPath, 'project_3_outline', 'index.html')
 ];
 var testUrl = "http://blog.aboutme.be/about/";
 var testListPath = path.resolve(testAssetsPath, 'urls.txt');
