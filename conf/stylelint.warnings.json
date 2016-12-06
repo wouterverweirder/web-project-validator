@@ -1,0 +1,7 @@
+{
+  "extends": "stylelint-config-devine",
+  "rules": {
+    "rule-nested-empty-line-before": null,
+    "selector-no-universal": null
+  }
+}

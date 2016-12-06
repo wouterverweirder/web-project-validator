@@ -61,7 +61,14 @@ var processInput = function(argv) {
         return webProjectValidator.createOutputFoldersForReport(report);
       })
       .then(function(){
-        return buildReport(report);
+        var reporters = [
+          require('./lib/phantom-processor'),
+          require('./lib/jsdom-processor'),
+          (report.htmlValidator === 'offline') ? require('./lib/vnu-processor') : require('./lib/w3cjs-processor'),
+          require('./lib/resource-processor'),
+          require('./lib/firefox-processor')
+        ];
+        return webProjectValidator.buildReport(report, options, reporters);
       })
       .then(function(){
         resolve(report);
@@ -92,37 +99,6 @@ var generateOutput = function(report) {
     seq.then(function(){
       resolve();
     });
-  });
-};
-
-var buildReport = function(report) {
-  return new Promise(function(resolve, reject){
-    return Promise.resolve()
-      .then(function(){
-        return require('./lib/phantom-processor').buildReport(report);
-      })
-      .then(function(){
-        return require('./lib/jsdom-processor').buildReport(report);
-      })
-      .then(function(){
-        if(report.htmlValidator === 'offline') {
-          return require('./lib/vnu-processor').buildReport(report);
-        } else {
-          return require('./lib/w3cjs-processor').buildReport(report);
-        }
-      })
-      .then(function(){
-        return require('./lib/resource-processor').buildReport(report);
-      })
-      .then(function(){
-        return require('./lib/firefox-processor').buildReport(report);
-      })
-      .catch(function(error){
-        console.log(error);
-      })
-      .then(function(report){
-        resolve(report);
-      });
   });
 };
 

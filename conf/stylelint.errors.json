@@ -1,0 +1,18 @@
+{
+  "rules": {
+    "declaration-property-unit-blacklist": {
+      "/^font/": ["px"],
+      "/^margin/": ["px"],
+      "/^padding/": ["px"],
+      "/^border/": ["px"],
+      "/^top/": ["px"],
+      "/^left/": ["px"],
+      "/^bottom/": ["px"],
+      "/^right/": ["px"],
+      "/^width/": ["px"],
+      "/^height/": ["px"]
+    },
+    "property-blacklist": ["float"],
+    "selector-no-id": true
+  }
+}

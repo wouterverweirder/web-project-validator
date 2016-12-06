@@ -1,4 +1,41 @@
-body {
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+html {
+  box-sizing: border-box;
   font-size: 62.5%;
+}
+
+body {
   font-family: Comic Sans MS;
+}
+
+    .testjen {
+  border: 1px;
+}
+
+#idsarebad {
+  width: 100px;
+  height: 100px;
+  float: left;
+  margin-left: 10px;
+  padding: 5px;
+}
+
+.absolute-positioned {
+  width: 50vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 2em;
+}
+
+@media (max-width: 600px) {
+  .some-element {
+    position: absolute;
+    font-size: 10px;
+    top: 100px;
+    left: 0px;
+  }
 }
