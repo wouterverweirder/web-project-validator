@@ -11,6 +11,8 @@ body {
   font-family: Comic Sans MS;
 }
 
+a { color: red; text-decoration: none; }strong { font-weight: bold;}
+
     .testjen {
   border: 1px;
 }
@@ -29,6 +31,9 @@ body {
   top: 0;
   left: 0;
   padding: 2em;
+  &:hover {
+    background: blue;
+  }
 }
 
 @media (max-width: 600px) {

@@ -1,5 +1,9 @@
 {
+  "plugins": [
+    "./lib/reporter/lint-css/custom-rules/box-sizing-border-box"
+  ],
   "rules": {
+    "devinehowest/box-sizing-border-box": true,
     "declaration-property-unit-blacklist": {
       "/^font/": ["px"],
       "/^margin/": ["px"],
