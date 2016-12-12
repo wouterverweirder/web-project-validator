@@ -1,13 +1,12 @@
 <section>
   <header>
     <h1 class="h{{indentLevel}}">
-      Lint CSS:
-      <span class="small">{{numErrors}} errors / {{numWarnings}} warnings</span>
+      Validate Resources
+      <span class="small">{{numResources}} resources ({{numErrors}} errors / {{numWarnings}} warnings)</span>
     </h1>
   </header>
-  <p>{{context}}</p>
   <section>
-    <header class="hidden"><h1 class="h{{indentLevel2}}">validation messages</h1></header>
+    <header><h1 class="h{{indentLevel2}}">validation messages</h1></header>
     {{#each messages}}
       <article class="panel panel-{{outputType}}">
         <header class="panel-heading"><h1 class="panel-title">{{outputType}}: {{message}}</h1></header>
@@ -17,5 +16,13 @@
         </div>
       </article>
     {{/each}}
+  </section>
+  <section>
+    <header><h1 class="h{{indentLevel2}}">resources list</h1></header>
+    <ol>
+    {{#each results}}
+    <li>{{context}}</li>
+    {{/each}}
+    </ol>
   </section>
 </section>

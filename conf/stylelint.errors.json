@@ -1,9 +1,13 @@
 {
   "plugins": [
-    "./lib/reporter/lint-css/custom-rules/box-sizing-border-box"
+    "./lib/reporter/lint-css/custom-rules/has-flexbox",
+    "./lib/reporter/lint-css/custom-rules/box-sizing-border-box",
+    "./lib/reporter/lint-css/custom-rules/font-size-reset"
   ],
   "rules": {
     "devinehowest/box-sizing-border-box": true,
+    "devinehowest/has-flexbox": true,
+    "devinehowest/font-size-reset": true,
     "declaration-property-unit-blacklist": {
       "/^font/": ["px"],
       "/^margin/": ["px"],
@@ -17,6 +21,8 @@
       "/^height/": ["px"]
     },
     "property-blacklist": ["float"],
-    "selector-no-id": true
+    "selector-no-id": true,
+    "max-nesting-depth": 3,
+    "selector-max-specificity": "0,2,1"
   }
 }

@@ -168,19 +168,6 @@ describe('WebProjectValidator', function() {
       webProjectValidator._fillReportWithBasicFileReports(report, options);
       expect(report.reportsByFile[testAssetsHtmlFilePaths[0]].screenshots.screenshots).to.eql([]);
     });
-    it('should create a styleSheetPaths property in a file report', function() {
-      var report = { context: testAssetsPath, htmlFilePaths: testAssetsHtmlFilePaths };
-      var options = { type: 'folder' };
-      webProjectValidator._fillReportWithBasicFileReports(report, options);
-      expect(report.reportsByFile[testAssetsHtmlFilePaths[0]].styleSheetPaths).to.eql([]);
-    });
-    it('should create a resourcePaths property in a file report', function() {
-      var report = { context: testAssetsPath, htmlFilePaths: testAssetsHtmlFilePaths };
-      var options = { type: 'folder' };
-      webProjectValidator._fillReportWithBasicFileReports(report, options);
-      expect(report.reportsByFile[testAssetsHtmlFilePaths[0]]).to.have.property('resourcePaths');
-      expect(report.reportsByFile[testAssetsHtmlFilePaths[0]].resourcePaths).eql([]);
-    });
     it('should create a validator property in a file report', function() {
       var report = { context: testAssetsPath, htmlFilePaths: testAssetsHtmlFilePaths };
       var options = { type: 'folder' };
@@ -234,6 +221,20 @@ describe('WebProjectValidator', function() {
       webProjectValidator._fillReportWithBasicFileReports(report, options);
       expect(report.reportsByFile[testAssetsHtmlFilePaths[0]]).to.have.property('resources');
       expect(report.reportsByFile[testAssetsHtmlFilePaths[0]].resources).to.be.an('object');
+    });
+    it('should create a styleSheetPaths property resource report in a file report', function() {
+      var report = { context: testAssetsPath, htmlFilePaths: testAssetsHtmlFilePaths };
+      var options = { type: 'folder' };
+      webProjectValidator._fillReportWithBasicFileReports(report, options);
+      expect(report.reportsByFile[testAssetsHtmlFilePaths[0]].resources).to.have.property('styleSheetPaths');
+      expect(report.reportsByFile[testAssetsHtmlFilePaths[0]].resources.styleSheetPaths).to.eql([]);
+    });
+    it('should create a paths property resource report in a file report', function() {
+      var report = { context: testAssetsPath, htmlFilePaths: testAssetsHtmlFilePaths };
+      var options = { type: 'folder' };
+      webProjectValidator._fillReportWithBasicFileReports(report, options);
+      expect(report.reportsByFile[testAssetsHtmlFilePaths[0]].resources).to.have.property('paths');
+      expect(report.reportsByFile[testAssetsHtmlFilePaths[0]].resources.paths).eql([]);
     });
     it('should set the context property resource report to the html file path', function() {
       var report = { context: testAssetsPath, htmlFilePaths: testAssetsHtmlFilePaths };

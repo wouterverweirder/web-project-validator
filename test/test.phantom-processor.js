@@ -46,8 +46,8 @@ describe('phantom-processor', function() {
     })
     .then(function(){
       var fileReport = report.reportsByFile[testAssetsHtmlFilePaths[0]];
-      expect(fileReport.styleSheetPaths).to.contain('file://' + path.resolve(testAssetsPath, 'project_1', 'css', 'style.css'));
-      expect(fileReport.styleSheetPaths).to.contain('file://' + path.resolve(testAssetsPath, 'project_1', 'css', 'style.async.css'));
+      expect(fileReport.resources.styleSheetPaths).to.contain('file://' + path.resolve(testAssetsPath, 'project_1', 'css', 'style.css'));
+      expect(fileReport.resources.styleSheetPaths).to.contain('file://' + path.resolve(testAssetsPath, 'project_1', 'css', 'style.async.css'));
     });
   })
   it('should fill a report for an online url', function(){
@@ -64,9 +64,9 @@ describe('phantom-processor', function() {
     .then(function(){
       var fileReport = report.reportsByFile[testUrl];
       //check resource paths
-      expect(fileReport.resourcePaths).to.contain('http://blog.aboutme.be/stylesheets/screen.css');
-      expect(fileReport.resourcePaths).to.contain('http://blog.aboutme.be/javascripts/modernizr-2.0.js');
-      expect(fileReport.resourcePaths).to.contain('http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js');
+      expect(fileReport.resources.paths).to.contain('http://blog.aboutme.be/stylesheets/screen.css');
+      expect(fileReport.resources.paths).to.contain('http://blog.aboutme.be/javascripts/modernizr-2.0.js');
+      expect(fileReport.resources.paths).to.contain('http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js');
       //check screenshot
       expect(fileReport.screenshots.screenshots).to.have.length(1);
       expect(fileReport.screenshots.screenshots[0].browserName).to.equal('phantomjs');
