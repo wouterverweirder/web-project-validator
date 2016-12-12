@@ -1,35 +1,14 @@
 <script>
 (function(){
-  require.config({
-    packages: [
-      {
-        name: 'codemirror',
-        location: '//cdnjs.cloudflare.com/ajax/libs/codemirror/4.0.3',
-        main: 'codemirror'
-      }
-    ],
-    map: {
-      'codemirror': {
-        'codemirror/lib/codemirror': 'codemirror'
-      }
-    }
-  });
-  require.config({
-    packages: [{
-      name: "codemirror",
-      location: "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.9.0",
-      main: "codemirror"
-    }]
-  });
-  require(["codemirror", "codemirror/mode/htmlmixed/htmlmixed", "codemirror/mode/css/css",
-         "codemirror/addon/hint/show-hint", "codemirror/addon/hint/html-hint",
-         "codemirror/addon/mode/loadmode", "codemirror/addon/search/search", "codemirror/addon/search/searchcursor", "codemirror/addon/dialog/dialog"], function(CodeMirror) {
-          init(CodeMirror);
-  });
 
-  function init(CodeMirror) {
-    //create codemirror instances
-    var codeMirrorInstances = [];
+  var codeMirrorInstances = [];
+
+  var init = function(CodeMirror) {
+    initCodeMirror(CodeMirror);
+    initTabs();
+  };
+
+  var initCodeMirror = function(CodeMirror) {
     $('textarea[data-mode]').each(function(index, textarea){
       var codeMirror = CodeMirror.fromTextArea(textarea, {
         lineNumbers: true,
@@ -38,8 +17,9 @@
       });
       codeMirrorInstances.push(codeMirror);
     });
+  };
 
-
+  var initTabs = function() {
     //manual manage tabs, as we don't want to work with element ids
     $('a[role=tab]').click(function (e) {
       e.preventDefault();
@@ -69,5 +49,25 @@
       $('a[role=tab]').first().click();
     });
   };
+
+  require.config({
+    packages: [
+      {
+        name: "codemirror",
+        location: "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.9.0",
+        main: "codemirror"
+      }
+    ],
+    map: {
+      'codemirror': {
+        'codemirror/lib/codemirror': 'codemirror'
+      }
+    }
+  });
+  require(["codemirror", "codemirror/mode/htmlmixed/htmlmixed", "codemirror/mode/css/css",
+         "codemirror/addon/hint/show-hint", "codemirror/addon/hint/html-hint",
+         "codemirror/addon/mode/loadmode", "codemirror/addon/search/search", "codemirror/addon/search/searchcursor", "codemirror/addon/dialog/dialog"], function(CodeMirror) {
+          init(CodeMirror);
+  });
 })();
 </script>

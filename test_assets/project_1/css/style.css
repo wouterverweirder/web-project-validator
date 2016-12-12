@@ -9,7 +9,7 @@ html {
 
 body {
   font-family: Comic Sans MS;
-  background: url('../pattern.png');
+  background: url('../pattern.png') repeat;
 }
 
 a { color: red; text-decoration: none; }strong { font-weight: bold;}
@@ -25,7 +25,7 @@ a { color: red; text-decoration: none; }strong { font-weight: bold;}
 #test-id {
   width: 100px;
   height: 100px;
-  background: url('file-not-found.png');
+  background: url(file-not-found.png);
   float: left;
   margin-left: 10px;
   padding: 5px;

@@ -1,0 +1,27 @@
+<section>
+  <header>
+    <h1 class="h{{indentLevel}}">
+      Images:
+    </h1>
+  </header>
+  <section>
+    <header><h1 class="h{{indentLevel2}}">Included As Image Tags</h1></header>
+    {{#each htmlImagePaths}}
+    <div style="display: flex;">
+      <div class="image-report-image-container">
+        <img src="{{.}}" />
+      </div>
+    </div>
+    {{/each}}
+  </section>
+  <section>
+    <header><h1 class="h{{indentLevel2}}">Included As Background Images</h1></header>
+    {{#each backgroundImagePaths}}
+    <div style="display: flex;">
+      <div class="image-report-image-container">
+        <img src="{{.}}" />
+      </div>
+    </div>
+    {{/each}}
+  </section>
+</section>

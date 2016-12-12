@@ -248,6 +248,27 @@ describe('WebProjectValidator', function() {
       webProjectValidator._fillReportWithBasicFileReports(report, options);
       expect(report.reportsByFile[testAssetsHtmlFilePaths[0]].resources.results).to.eql([]);
     });
+    it('should create a images property in a file report', function() {
+      var report = { context: testAssetsPath, htmlFilePaths: testAssetsHtmlFilePaths };
+      var options = { type: 'folder' };
+      webProjectValidator._fillReportWithBasicFileReports(report, options);
+      expect(report.reportsByFile[testAssetsHtmlFilePaths[0]]).to.have.property('images');
+      expect(report.reportsByFile[testAssetsHtmlFilePaths[0]].images).to.be.an('object');
+    });
+    it('should create a htmlImagePaths property image report in a file report', function() {
+      var report = { context: testAssetsPath, htmlFilePaths: testAssetsHtmlFilePaths };
+      var options = { type: 'folder' };
+      webProjectValidator._fillReportWithBasicFileReports(report, options);
+      expect(report.reportsByFile[testAssetsHtmlFilePaths[0]].images).to.have.property('htmlImagePaths');
+      expect(report.reportsByFile[testAssetsHtmlFilePaths[0]].images.htmlImagePaths).to.eql([]);
+    });
+    it('should create a backgroundImagePaths property image report in a file report', function() {
+      var report = { context: testAssetsPath, htmlFilePaths: testAssetsHtmlFilePaths };
+      var options = { type: 'folder' };
+      webProjectValidator._fillReportWithBasicFileReports(report, options);
+      expect(report.reportsByFile[testAssetsHtmlFilePaths[0]].images).to.have.property('backgroundImagePaths');
+      expect(report.reportsByFile[testAssetsHtmlFilePaths[0]].images.backgroundImagePaths).to.eql([]);
+    });
   });
   describe('#initReport()', function() {
     var webProjectValidator;

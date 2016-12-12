@@ -24,6 +24,7 @@ var outlineHtmlReporter = require('./lib/reporter/outline-html');
 var validateHtmlReporter = require('./lib/reporter/validate-html');
 var validateLinkedResourcePathsReporter = require('./lib/reporter/validate-linked-resource-paths');
 var screenshotsReporter = require('./lib/reporter/screenshots');
+var imagesReporter = require('./lib/reporter/images');
 
 var generateIndent = require('./lib/indent_utils').generateIndent;
 var getHtmlFilesFromDirectory = require('./lib/fs_utils').getHtmlFilesFromDirectory;
@@ -228,6 +229,15 @@ var generateTextReport = function(report, options) {
         output += reportOutput;
       })
       .then(function(){
+        return imagesReporter.convertReportToPlainText(report.images, Object.assign({}, options, { indentLevel: options.indentLevel + 1 }));
+      })
+      .catch(function(error){
+        console.log('imagesReporter error: ' + error);
+      })
+      .then(function(reportOutput) {
+        output += reportOutput;
+      })
+      .then(function(){
         resolve(output);
       })
       .catch(function(error){
@@ -251,7 +261,8 @@ var generateHtmlReport = function(report, options) {
       { title: 'HTML Validation', name: 'validate-html', method: validateHtmlReporter.convertReportToHtml, report: report.validator },
       { title: 'Outline', name: 'outline-html', method: outlineHtmlReporter.convertReportToHtml, report: report.outline },
       { title: 'CSS Lint', name: 'lint-css', method: lintLinkedCssFilesReporter.convertReportToHtml, report: report.stylelint },
-      { title: 'Resources', name: 'validate-linked-resource-paths', method: validateLinkedResourcePathsReporter.convertReportToHtml, report: report.resources }
+      { title: 'Resources', name: 'validate-linked-resource-paths', method: validateLinkedResourcePathsReporter.convertReportToHtml, report: report.resources },
+      { title: 'Images', name: 'images', method: imagesReporter.convertReportToHtml, report: report.images }
     ];
 
     var output = '';
@@ -260,23 +271,14 @@ var generateHtmlReport = function(report, options) {
     sequence = sequence
       .then(function(){
         output += '<html>';
-        output += '<head>';
-        output += '<meta charset="UTF-8" />';
-        output += '<meta name="viewport" content="width=device-width, initial-scale=1">';
-        output += '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">';
-        output += '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">';
-        output += '<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>';
-        output += '<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>';
-        output += '<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.22/require.min.js"></script>';
-        output += '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.9.0/codemirror.min.css" />';
-        output += '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.9.0/addon/dialog/dialog.css" />';
-        output += "<style>\n";
-        output += "   .CodeMirror {\n";
-        output += "        height: 600px;\n";
-        output += "        background: white;\n";
-        output += "    }\n";
-        output += "</style>\n";
-        output += '</head>';
+      })
+      .then(function(){
+        return fsUtils.loadResource(path.resolve(__dirname, 'lib/reporter/html.head.hbs'), 'utf-8');
+      })
+      .then(function(headTagContent){
+        output += headTagContent;
+      })
+      .then(function(){
         output += '<body>';
         output += '<main class="container-fluid">';
         output += '<header><h1>Webpage Report</h1></header>';
@@ -322,7 +324,7 @@ var generateHtmlReport = function(report, options) {
       .then(function(){
         //tab for live view
         output += '<div role="tabpanel" class="tab-pane active" data-tab-id="live-view">';
-        output += '<iframe width="100%" height="600" src="' + report.context + '"></iframe>';
+        output += '<iframe id="live-view" width="100%" height="600" src="' + report.context + '"></iframe>';
         output += '</div>';
       })
       .then(function(){

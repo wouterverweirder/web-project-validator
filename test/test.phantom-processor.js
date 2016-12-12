@@ -49,6 +49,23 @@ describe('phantom-processor', function() {
       expect(fileReport.resources.styleSheetPaths).to.contain('file://' + path.resolve(testAssetsPath, 'project_1', 'css', 'style.css'));
       expect(fileReport.resources.styleSheetPaths).to.contain('file://' + path.resolve(testAssetsPath, 'project_1', 'css', 'style.async.css'));
     });
+  });
+  it('should set the htmlImage paths', function(){
+    this.timeout(0);
+    var report = { context: testAssetsHtmlFilePaths[0] };
+    var options = { type: 'file' };
+    return expect(webProjectValidator.initReport(report, options)).to.be.fulfilled
+    .then(function(){
+      return webProjectValidator.createOutputFoldersForReport(report);
+    })
+    .then(function(){
+      return require('../lib/phantom-processor').buildReport(report);
+    })
+    .then(function(){
+      var fileReport = report.reportsByFile[testAssetsHtmlFilePaths[0]];
+      expect(fileReport.images.htmlImagePaths).to.contain('file://' + path.resolve(testAssetsPath, 'project_1', 'file-not-found.png'));
+      expect(fileReport.images.htmlImagePaths).to.contain('file://' + path.resolve(testAssetsPath, 'project_1', 'photo with spaces.jpg'));
+    });
   })
   it('should fill a report for an online url', function(){
     this.timeout(0);
