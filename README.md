@@ -4,10 +4,11 @@ Analyse an html project automatically and get a report with info on:
 
 - html validation (using validator.nu)
 - html outline (using h5o)
-- css quality (using csslint)
+- css quality (using stylelint)
 - file naming (use lowercase characters, no special characters, ...)
 - file resolving (get reports if referenced files cannot be found)
 - screenshots (phantomjs & firefox)
+- images (which images are loaded from image tags, which images are css background images)
 
 ## Installation
 
