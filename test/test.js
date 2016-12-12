@@ -18,7 +18,6 @@ var testUrl = "http://blog.aboutme.be/about/";
 var testListPath = path.resolve(testAssetsPath, 'urls.txt');
 var testListUrls = [
   'http://blog.aboutme.be/about/',
-  'http://devine.be',
   'http://bump-festival.be'
 ];
 var testDefaultOutputPath = path.resolve('./output');

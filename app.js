@@ -1,11 +1,11 @@
 var argv = require('yargs')
   .usage('Usage: $0 <input> [options]')
   .example('$0 http://www.bump-festival.be', 'create a report for the given url')
+  .example('$0 ./my-project/index.html', 'create a report for the html file')
+  .example('$0 urls.txt', 'create a report for each url listed in the file')
   .help('h')
   .alias('h', 'help')
   .demand(1)
-  .default('input-type', 'url')
-  .describe('input-type', 'What type is the input (url, file, folder or list)')
   .default('output-folder', './output')
   .describe('output-folder', 'Where do you want to save the generated report?')
   .default('output-style', 'html')
@@ -49,12 +49,18 @@ var processInput = function(argv) {
       htmlValidator: argv['html-validator']
     };
     var options = {
-      type: argv['input-type'],
+      type: false,
       outputFolder: argv['output-folder']
     };
     var WebProjectValidator = require('./lib');
     webProjectValidator = new WebProjectValidator();
     Promise.resolve()
+      .then(function(){
+        return fsUtils.getInputTypeFromArgument(argv._[0]);
+      })
+      .then(function(inputType){
+        options.type = inputType;
+      })
       .then(function(){
         return webProjectValidator.initReport(report, options);
       })

@@ -67,7 +67,7 @@ $ node app.js https://github.com
 ### Get a report on one html file
 
 ```
-$ node app.js path/to/the/html/file --input-type=file
+$ node app.js path/to/the/html/file
 ```
 
 ### Get a report on a folder
@@ -75,7 +75,7 @@ $ node app.js path/to/the/html/file --input-type=file
 This will scan a folder recursively, and create a report on every html file it finds inside that folder and its subfolders.
 
 ```
-$ node app.js path/to/the/folder --input-type=folder
+$ node app.js path/to/the/folder
 ```
 
 ### Get a report on a list of urls
@@ -83,7 +83,7 @@ $ node app.js path/to/the/folder --input-type=folder
 This will validate the urls specified in a given file. Urls inside this file are separated by enters.
 
 ```
-$ node app.js urls.txt --input-type=list
+$ node app.js urls.txt
 ```
 
 ### Use the offline w3c validator instead of the online validator
