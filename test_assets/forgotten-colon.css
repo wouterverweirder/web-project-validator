@@ -1,0 +1,180 @@
+
+html {
+    font-size: 62.5%;
+    color: #3B3F41;
+}
+
+h3 {
+    font-family: monospace;
+    font-size: 2rem;
+}
+.gradient-background {
+    display: flex;
+    height: 40rem;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    background: red; /* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(-90deg, #EF2D40, #F03976); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(-90deg, #EF2D40, #F03976); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(-90deg, #EF2D40, #F03976); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(-90deg, #EF2D40, #F03976); /* Standard syntax (must be last) */  
+}
+
+body {
+    font-family: 'helvetica', sans-serif;
+    border: 1px #F4F4F4 solid;
+    background-color: #F5F5F5;
+}
+
+.menu-item {
+    font-size: 1.2rem;
+    width: 7rem;
+    height: 1.2rem;
+    text-align: center;
+    margin: 0.2rem;
+    text-decoration: none;
+    color: #3B3F41;
+    -moz-transition: all .2s ease-in;
+    -o-transition: all .2s ease-in;
+    -webkit-transition: all .2s ease-in;
+    transition: all .2s ease-in;
+    background: #f5f5f5; 
+    padding: 0.4rem;
+}
+
+.menu-item:hover {
+    font-size: 1.3rem;
+    background: #F85358;
+    color: white;
+}
+
+.navigatie {
+    display: flex;
+    justify-content: center;
+}
+
+.menu {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.main-container {
+    display: flex;
+    justify-content: center;
+}
+
+.main-in-container {
+    width: 96rem;
+}
+
+.bio-p {
+    display: flex;
+    justify-content: space-between;
+}
+
+#bio-p {
+    width 40%;
+}
+
+.width-p-50 {
+    width: 50%;
+}
+
+.standpunt-pictogram {
+    height: 10rem;
+    width: 10rem;
+}
+
+.standpunten {
+    display: flex;
+    justify-content: space-around;
+    padding: 2rem;
+    background-color: #F5F5F5;
+    background-image: url(../images/background1.png);
+}
+
+.standpuntPic {
+    height: 10rem;
+    width: 10rem;
+    margin-right: 1rem;
+}
+
+.standpuntArticle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 2rem;
+    padding: 2rem;
+}
+
+.bio {
+    background-color: #F5F5F5;
+    padding: 2rem;
+}
+
+.tekst-kleur-standaard {
+    color: #3B3F41;
+}
+
+h2 {
+    color: #F85358;
+    font-family: monospace;
+    font-size: 3rem;
+}
+
+.standpunt-grondstoffen {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 2rem;
+    padding: 2rem;
+}
+
+.standpunt-uitleg {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+}
+
+.standpunt-intergalaxtische-macht {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    margin: 2rem;
+    padding: 2rem;
+}
+
+.standpunt-clubs {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 2rem;
+    padding: 2rem;
+}
+
+.footer {
+    background-color: #F85358;
+    height: 5rem;
+}
+
+#bannerHeader {
+    font-size: 5rem;
+}
+
+.mars {
+    margin-left: 2rem;
+}
+
+.break {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 20rem;
+    font-family: monospace;
+    font-size: 5rem;
+}
+
+p {
+    font-size: 1.2rem;
+}
