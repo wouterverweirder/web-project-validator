@@ -12,8 +12,6 @@ var argv = require('yargs')
   .demand(1)
   .default('output-folder', './output')
   .describe('output-folder', 'Where do you want to save the generated report?')
-  .default('output-style', 'html')
-  .describe('output-style', 'The style of the output report (html or text)')
   .default('html-validator', 'offline')
   .describe('html-validator', 'Which html validator to use (online or offline)')
   .argv;
