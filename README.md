@@ -41,6 +41,8 @@ On OSX this might be a challenge. These are the steps I followed to update my Ja
   $ sudo rm CurrentJDK
   ```
 
+  Note: if you get an error saying "Operation Not Permitted", it probably means you've got System Integrity Protection active (new security feature since OSX El Capitan). Check the stackoverflow answer at http://stackoverflow.com/a/33681751 on how to disable this and try removing the symlink again.
+
 5. Link the JDK you just installed as CurrentJDK:
 
   ```sh
