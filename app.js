@@ -26,6 +26,7 @@ const fs = require('fs'),
 
 const WebProjectValidator = require('./lib'),
   getResourceReportForResource = require('./lib/utils.js').getResourceReportForResource,
+  getStylelintReportForResource = require('./lib/utils.js').getStylelintReportForResource,
   htmlFileOutputGenerator = require('./lib/output/html-file-output-generator'),
   cssFileOutputGenerator = require('./lib/output/css-file-output-generator'),
   lintLinkedCssFilesReporter = require('./lib/reporter/lint-linked-css-files'),
@@ -222,14 +223,50 @@ const generateHtmlReport = (report, options) => {
         //html source tab
         const resourceReport = getResourceReportForResource(report, report.context);
         const name = path.basename(resourceReport.source);
-        output += '<li><a href="#view-source-' + resourceReport.nr + '" aria-controls="view-source-' + resourceReport.nr + '" role="tab">' + name + '</a></li>';
+        let badges = '';
+        let numErrors = 0;
+        let numWarnings = 0;
+        //outline
+        numErrors += report.outline.numErrors;
+        numWarnings += report.outline.numWarnings;
+        //validator
+        numErrors += report.validator.numErrors;
+        numWarnings += report.validator.numWarnings;
+        if(numErrors > 0) {
+          badges += ' <span class="badge" style="background: red">' + numErrors + '</span>';
+        }
+        if(numWarnings > 0) {
+          badges += ' <span class="badge" style="background: orange">' + numWarnings + '</span>';
+        }
+        output += `<li>
+          <a href="#view-source-${resourceReport.nr}" aria-controls="view-source-${resourceReport.nr}" role="tab">
+            ${name}${badges}
+          </a>
+        </li>`;
       })
       .then(() => {
         //css source tabs
         report.resources.styleSheetPaths.forEach(styleSheetPath => {
           const resourceReport = getResourceReportForResource(report, styleSheetPath);
           const name = path.basename(resourceReport.source);
-          output += '<li><a href="#view-source-' + resourceReport.nr + '" aria-controls="view-source-' + resourceReport.nr + '" role="tab">' + name + '</a></li>';
+          let badges = '';
+          let numErrors = 0;
+          let numWarnings = 0;
+          //get the stylelint result
+          const styleLintReport = getStylelintReportForResource(report, styleSheetPath);
+          numErrors += styleLintReport.numErrors;
+          numWarnings += styleLintReport.numWarnings;
+          if(numErrors > 0) {
+            badges += ' <span class="badge" style="background: red">' + numErrors + '</span>';
+          }
+          if(numWarnings > 0) {
+            badges += ' <span class="badge" style="background: orange">' + numWarnings + '</span>';
+          }
+          output += `<li>
+            <a href="#view-source-${resourceReport.nr}" aria-controls="view-source-${resourceReport.nr}" role="tab">
+              ${name}${badges}
+            </a>
+          </li>`;
         });
       })
       .then(() => {
