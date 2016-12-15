@@ -1,16 +1,19 @@
 <script>
-(function(){
+'use strict';
+{
 
-  var codeMirrorInstances = [];
+  const codeMirrorInstances = [];
+  const splitInstances = [];
 
-  var init = function(CodeMirror) {
+  const init = CodeMirror => {
     initCodeMirror(CodeMirror);
     initTabs();
+    initSplit();
   };
 
-  var initCodeMirror = function(CodeMirror) {
-    $('textarea[data-mode]').each(function(index, textarea){
-      var codeMirror = CodeMirror.fromTextArea(textarea, {
+  const initCodeMirror = CodeMirror => {
+    $('textarea[data-mode]').each((index, textarea) => {
+      const codeMirror = CodeMirror.fromTextArea(textarea, {
         lineNumbers: true,
         mode: $(textarea).data('mode'),
         extraKeys: {"Ctrl-Space": "autocomplete"}
@@ -19,20 +22,46 @@
     });
   };
 
-  var initTabs = function() {
+  const initSplit = function() {
+    //get the split containers
+    const splitContainerEls = document.querySelectorAll('.split-container');
+    for(let i = 0; i < splitContainerEls.length; i++) {
+      //get all first-descendant splits
+      const splitContainerEl = splitContainerEls[i];
+      const splitEls = [];
+      const splitSizes = [];
+      for(let j = 0; j < splitContainerEl.children.length; j++) {
+        if(!splitContainerEl.children[j].classList.contains('split')) {
+          continue;
+        }
+        const splitEl = splitContainerEl.children[j];
+        const splitSize = parseFloat(splitEl.dataset.splitSize);
+        splitEls.push(splitEl);
+        splitSizes.push(splitSize);
+      }
+      const split = Split(splitEls, {
+          sizes: splitSizes,
+          minSize: 50
+      });
+      splitInstances.push({
+        split: split,
+        sizes: splitSizes
+      });
+    }
+  };
+
+  const initTabs = () => {
     //manual manage tabs, as we don't want to work with element ids
-    $('a[role=tab]').click(function (e) {
+    $('a[role=tab]').click(e => {
       e.preventDefault();
-      var tabId = $(e.currentTarget).attr('aria-controls');
-
-      var $tab = $('[data-tab-id="' + tabId + '"]');
-
-      var $navTabs = $(e.currentTarget).parents('.nav-tabs');
+      const tabId = $(e.currentTarget).attr('aria-controls');
+      const $tab = $('[data-tab-id="' + tabId + '"]');
+      const $navTabs = $(e.currentTarget).parents('.nav-tabs');
       $navTabs.find('.active').removeClass('active');
 
-      $navTabs.find('[aria-controls]').each(function(i, tabLink){
-        var tabLinkTargetId = $(tabLink).attr('aria-controls');
-        var $tabLinkTarget = $('[data-tab-id="' + tabLinkTargetId + '"]');
+      $navTabs.find('[aria-controls]').each((i, tabLink) => {
+        const tabLinkTargetId = $(tabLink).attr('aria-controls');
+        const $tabLinkTarget = $('[data-tab-id="' + tabLinkTargetId + '"]');
         $tabLinkTarget.removeClass('active');
       });
 
@@ -40,12 +69,16 @@
       $(e.target).closest('li').addClass('active');
       $tab.addClass("active");
 
-      codeMirrorInstances.forEach(function(codeMirrorInstance){
+      codeMirrorInstances.forEach(codeMirrorInstance => {
         codeMirrorInstance.refresh();
+      });
+
+      splitInstances.forEach(splitInstance => {
+        splitInstance.split.setSizes(splitInstance.sizes);
       });
     });
 
-    requestAnimationFrame(function(){
+    requestAnimationFrame(() => {
       $('a[role=tab]').first().click();
     });
   };
@@ -69,5 +102,5 @@
          "codemirror/addon/mode/loadmode", "codemirror/addon/search/search", "codemirror/addon/search/searchcursor", "codemirror/addon/dialog/dialog"], function(CodeMirror) {
           init(CodeMirror);
   });
-})();
+};
 </script>

@@ -22,6 +22,9 @@ const fs = require('fs'),
   fsUtils = require('./lib/fs_utils');
 
 const WebProjectValidator = require('./lib'),
+  getResourceReportForResource = require('./lib/utils.js').getResourceReportForResource,
+  htmlFileOutputGenerator = require('./lib/output/html-file-output-generator'),
+  cssFileOutputGenerator = require('./lib/output/css-file-output-generator'),
   lintLinkedCssFilesReporter = require('./lib/reporter/lint-linked-css-files'),
   outlineHtmlReporter = require('./lib/reporter/outline-html'),
   validateHtmlReporter = require('./lib/reporter/validate-html'),
@@ -62,7 +65,7 @@ const processInput = argv => {
           require('./lib/jsdom-processor'),
           (report.htmlValidator === 'offline') ? require('./lib/vnu-processor') : require('./lib/w3cjs-processor'),
           require('./lib/resource-processor'),
-          require('./lib/firefox-processor')
+          // require('./lib/firefox-processor')
         ];
         return webProjectValidator.buildReport(report, options, reporters);
       })
@@ -165,10 +168,6 @@ const generateHtmlReport = (report, options) => {
     const indent = generateIndent(options.indentLevel);
 
     const reporters = [
-      { title: 'Screenshots', name: 'screenshots', method: screenshotsReporter.convertReportToHtml, report: report.screenshots },
-      { title: 'HTML Validation', name: 'validate-html', method: validateHtmlReporter.convertReportToHtml, report: report.validator },
-      { title: 'Outline', name: 'outline-html', method: outlineHtmlReporter.convertReportToHtml, report: report.outline },
-      { title: 'CSS Lint', name: 'lint-css', method: lintLinkedCssFilesReporter.convertReportToHtml, report: report.stylelint },
       { title: 'Resources', name: 'validate-linked-resource-paths', method: validateLinkedResourcePathsReporter.convertReportToHtml, report: report.resources },
       { title: 'Images', name: 'images', method: imagesReporter.convertReportToHtml, report: report.images }
     ];
@@ -195,12 +194,17 @@ const generateHtmlReport = (report, options) => {
         output += '<li role="presentation" class="active"><a href="#" aria-controls="live-view" role="tab">Live View</a></li>';
       })
       .then(() => {
-        //tabs for the source files
-        report.resources.results.forEach(resourceReport => {
-          if(resourceReport.source) {
-            const name = path.basename(resourceReport.source);
-            output += '<li><a href="#view-source-' + resourceReport.nr + '" aria-controls="view-source-' + resourceReport.nr + '" role="tab">' + name + '</a></li>';
-          }
+        //html source tab
+        const resourceReport = getResourceReportForResource(report, report.context);
+        const name = path.basename(resourceReport.source);
+        output += '<li><a href="#view-source-' + resourceReport.nr + '" aria-controls="view-source-' + resourceReport.nr + '" role="tab">' + name + '</a></li>';
+      })
+      .then(() => {
+        //css source tabs
+        report.resources.styleSheetPaths.forEach(styleSheetPath => {
+          const resourceReport = getResourceReportForResource(report, styleSheetPath);
+          const name = path.basename(resourceReport.source);
+          output += '<li><a href="#view-source-' + resourceReport.nr + '" aria-controls="view-source-' + resourceReport.nr + '" role="tab">' + name + '</a></li>';
         });
       })
       .then(() => {
@@ -230,25 +234,42 @@ const generateHtmlReport = (report, options) => {
         output += '</div>';
       })
       .then(() => {
-        //tabs for the source files
+        //html source tab content
         let resourceTabsSequence = Promise.resolve();
-        report.resources.results.forEach(resourceReport => {
-          if(resourceReport.source) {
-            resourceTabsSequence = resourceTabsSequence.then(() => {
-              const name = path.basename(resourceReport.source);
-              output += '<div role="tabpanel" class="tab-pane" data-tab-id="view-source-' + resourceReport.nr + '">';
-            })
-            .then(() => fsUtils.loadResource(resourceReport.source, 'utf-8'))
-            .then(contents => {
-              //check mode
-              const src = '<textarea style="width: 100%; height: 600px;" data-mode="{{mode}}">{{code}}</textarea>';
-              const template = require('handlebars').compile(src);
-              output += template({code: contents, mode: resourceReport.mode});
-            })
-            .then(() => {
-              output += '</div>';
-            });
-          }
+        {
+          const resourceReport = getResourceReportForResource(report, report.context);
+          const name = path.basename(resourceReport.source);
+          resourceTabsSequence = resourceTabsSequence
+          .then(() => {
+            output += '<div role="tabpanel" class="tab-pane" data-tab-id="view-source-' + resourceReport.nr + '">';
+          })
+          .then(() => htmlFileOutputGenerator.generateOutput(report, resourceReport.context, options))
+          .then(htmlFileOutputGeneratorOutput => {
+            output += htmlFileOutputGeneratorOutput;
+          })
+          .then(() => {
+            output += '</div>';
+          });
+        }
+        return resourceTabsSequence;
+      })
+      .then(() => {
+        //css source tabs contents
+        let resourceTabsSequence = Promise.resolve();
+        report.resources.styleSheetPaths.forEach(styleSheetPath => {
+          const resourceReport = getResourceReportForResource(report, styleSheetPath);
+          const name = path.basename(resourceReport.source);
+          resourceTabsSequence = resourceTabsSequence
+          .then(() => {
+            output += '<div role="tabpanel" class="tab-pane" data-tab-id="view-source-' + resourceReport.nr + '">';
+          })
+          .then(() => cssFileOutputGenerator.generateOutput(report, resourceReport.context, options))
+          .then(htmlFileOutputGeneratorOutput => {
+            output += htmlFileOutputGeneratorOutput;
+          })
+          .then(() => {
+            output += '</div>';
+          });
         });
         return resourceTabsSequence;
       })
