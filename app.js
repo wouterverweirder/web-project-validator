@@ -7,6 +7,7 @@ var argv = require('yargs')
   .example('$0 ./project/', 'create a report for each file in the directory')
   .example('$0 urls.txt', 'create a report for each url listed in the file')
   .example('$0 http://www.bump-festival.be --html-validator=online', 'use the w3c online validator')
+  .example('$0 http://www.bump-festival.be --screenshots', 'include screenshots in the report')
   .help('h')
   .alias('h', 'help')
   .demand(1)
@@ -14,6 +15,8 @@ var argv = require('yargs')
   .describe('output-folder', 'Where do you want to save the generated report?')
   .default('html-validator', 'offline')
   .describe('html-validator', 'Which html validator to use (online or offline)')
+  .default('screenshots', false)
+  .describe('screenshots', 'Create screenshots of the webpage')
   .argv;
 
 const fs = require('fs'),
@@ -36,23 +39,38 @@ const generateIndent = require('./lib/indent_utils').generateIndent,
   getHtmlFilesFromDirectory = require('./lib/fs_utils').getHtmlFilesFromDirectory;
 
 const init = () => {
+  let report, options;
   processInput(argv)
-    .then(report => generateOutput(report))
+    .then(o => {
+      report = o.report;
+      options = o.options;
+    })
+    .then(() => buildReport(report, options))
+    .then(report => generateOutput(report, options))
     .then(() => {
       console.log('ALL DONE');
     });
 };
 
 const processInput = argv => {
+  return Promise.resolve()
+  .then(() => {
+    return {
+      report: {
+        context: argv._[0],
+        htmlValidator: argv['html-validator']
+      },
+      options: {
+        type: false,
+        outputFolder: argv['output-folder'],
+        screenshots: argv['screenshots']
+      }
+    };
+  });
+};
+
+const buildReport = (report, options) => {
   return new Promise((resolve, reject) => {
-    const report = {
-      context: argv._[0],
-      htmlValidator: argv['html-validator']
-    };
-    const options = {
-      type: false,
-      outputFolder: argv['output-folder']
-    };
     const webProjectValidator = new WebProjectValidator();
     Promise.resolve()
       .then(() => fsUtils.getInputTypeFromArgument(argv._[0]))
@@ -64,25 +82,28 @@ const processInput = argv => {
           require('./lib/phantom-processor'),
           require('./lib/jsdom-processor'),
           (report.htmlValidator === 'offline') ? require('./lib/vnu-processor') : require('./lib/w3cjs-processor'),
-          require('./lib/resource-processor'),
-          // require('./lib/firefox-processor')
+          require('./lib/resource-processor')
         ];
+        if(options.screenshots) {
+          reporters.push(require('./lib/firefox-processor'));
+        }
         return webProjectValidator.buildReport(report, options, reporters);
       })
+      .catch(e => console.error(e))
       .then(() => {
         resolve(report);
       });
   });
 };
 
-const generateOutput = report => {
+const generateOutput = (report, options) => {
   return new Promise((resolve, reject) => {
     let seq = Promise.resolve();
     const reportFilePaths = [];
     report.htmlFilePaths.forEach(htmlFilePath => {
       seq = seq.then(() => {
         const fileReport = report.reportsByFile[htmlFilePath];
-        return generateReportOutput(fileReport, { outputFolderForThisFile: fileReport.outputFolder });
+        return generateReportOutput(fileReport, Object.assign({}, options, { outputFolderForThisFile: fileReport.outputFolder }));
       })
       .then(reportFilePath => {
         console.log('wrote report: ' + reportFilePath);
@@ -171,6 +192,10 @@ const generateHtmlReport = (report, options) => {
       { title: 'Resources', name: 'validate-linked-resource-paths', method: validateLinkedResourcePathsReporter.convertReportToHtml, report: report.resources },
       { title: 'Images', name: 'images', method: imagesReporter.convertReportToHtml, report: report.images }
     ];
+
+    if(options.screenshots) {
+      reporters.push({ title: 'Screenshots', name: 'screenshots', method: screenshotsReporter.convertReportToHtml, report: report.screenshots });
+    }
 
     let output = '';
 

@@ -96,7 +96,17 @@ This will validate the urls specified in a given file. Urls inside this file are
 $ node app.js urls.txt
 ```
 
+### Create screenshots
+
+Use the --screenshots cli option:
+
+```sh
+$ node app.js https://github.com --screenshots
+```
+
 ### Use the online w3c validator instead of the offline validator
+
+Use the --html-validator cli option:
 
 ```sh
 $ node app.js https://github.com --html-validator=online

@@ -35,7 +35,7 @@
     "tar.gz": "^1.0.5",
     "validator-nu": "^2.1.15",
     "w3cjs": "^0.3.0",
-    "wdio-screenshot": "wouterverweirder/wdio-screenshot",
+    "wdio-screenshot": "^0.3.0",
     "webdriverio": "^4.4.0",
     "xml2js": "^0.4.17",
     "yargs": "^6.4.0"
