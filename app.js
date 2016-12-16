@@ -222,6 +222,7 @@ const generateHtmlReport = (report, options) => {
       .then(() => {
         //html source tab
         const resourceReport = getResourceReportForResource(report, report.context);
+        console.log(resourceReport);
         const name = path.basename(resourceReport.source);
         let badges = '';
         let numErrors = 0;

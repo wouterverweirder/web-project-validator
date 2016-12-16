@@ -84,10 +84,10 @@ describe('phantom-processor', function() {
       expect(fileReport.resources.paths).to.contain('http://blog.aboutme.be/javascripts/modernizr-2.0.js');
       expect(fileReport.resources.paths).to.contain('http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js');
       //check screenshot
-      expect(fileReport.screenshots.screenshots).to.have.length(1);
-      expect(fileReport.screenshots.screenshots[0].browserName).to.equal('phantomjs');
-      expect(fileReport.screenshots.screenshots[0].url).to.equal(path.resolve(fileReport.outputFolder, 'phantomjs.png'));
-      expect(fileReport.screenshots.screenshots[0].url).to.be.a.file();
+      // expect(fileReport.screenshots.screenshots).to.have.length(1);
+      // expect(fileReport.screenshots.screenshots[0].browserName).to.equal('phantomjs');
+      // expect(fileReport.screenshots.screenshots[0].url).to.equal(path.resolve(fileReport.outputFolder, 'phantomjs.png'));
+      // expect(fileReport.screenshots.screenshots[0].url).to.be.a.file();
     });
   });
 });
