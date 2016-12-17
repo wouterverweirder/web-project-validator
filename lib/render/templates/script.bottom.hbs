@@ -1,0 +1,157 @@
+<script>
+'use strict';
+{
+
+  const codeMirrorInstances = [];
+  const codeMirrorInstancesByFileName = {};
+  const splitInstances = [];
+
+  const init = CodeMirror => {
+    initCodeMirror(CodeMirror);
+    initTabs();
+    initSplit();
+    initJumpToLine();
+  };
+
+  const initCodeMirror = CodeMirror => {
+    $('div[data-mode]').each((index, div) => {
+      const fileContent = window.atob(div.innerHTML);
+      const codeMirror = CodeMirror(elt => {
+        div.parentNode.replaceChild(elt, div);
+      }, {
+        value: fileContent,
+        lineNumbers: true,
+        styleActiveLine: true,
+        mode: $(div).data('mode'),
+        extraKeys: {"Ctrl-Space": "autocomplete"}
+      });
+      codeMirrorInstances.push(codeMirror);
+      if(div.dataset.file) {
+        let fileName = div.dataset.file;
+        if(fileName.indexOf('file://') === 0) {
+          fileName = fileName.substr('file://'.length);
+        }
+        codeMirrorInstancesByFileName[fileName] = codeMirror;
+      }
+    });
+  };
+
+  const initSplit = function() {
+    //get the split containers
+    const splitContainerEls = document.querySelectorAll('.split-container');
+    for(let i = 0; i < splitContainerEls.length; i++) {
+      //get all first-descendant splits
+      const splitContainerEl = splitContainerEls[i];
+      const splitEls = [];
+      const splitSizes = [];
+      for(let j = 0; j < splitContainerEl.children.length; j++) {
+        if(!splitContainerEl.children[j].classList.contains('split')) {
+          continue;
+        }
+        const splitEl = splitContainerEl.children[j];
+        const splitSize = parseFloat(splitEl.dataset.splitSize);
+        splitEls.push(splitEl);
+        splitSizes.push(splitSize);
+      }
+      const split = Split(splitEls, {
+          sizes: splitSizes,
+          minSize: 50
+      });
+      splitInstances.push({
+        split: split,
+        sizes: splitSizes
+      });
+    }
+  };
+
+  const initJumpToLine = () => {
+    const elementsWithDataLine = document.querySelectorAll('[data-line]');
+    const numElements = elementsWithDataLine.length;
+    for(let i = 0; i < numElements; i++) {
+      const element = elementsWithDataLine[i];
+      //get the file we want to jump to
+      let fileName = element.dataset.file;
+      if(!fileName) {
+        const $parentElementWithFileName = $(element).parents('[data-file]');
+        if($parentElementWithFileName.length > 0) {
+          fileName = $parentElementWithFileName[0].dataset.file;
+        }
+      }
+      if(fileName) {
+        if(fileName.indexOf('file://') === 0) {
+          fileName = fileName.substr('file://'.length);
+        }
+        //get the codemirror element for this one
+        const codeMirror = codeMirrorInstancesByFileName[fileName];
+        if(codeMirror) {
+          element.addEventListener('click', () => {
+            codeMirror.setCursor(parseInt(element.dataset.line) - 1);
+          });
+        }
+      }
+    }
+  };
+
+  const initTabs = () => {
+    //manual manage tabs, as we don't want to work with element ids
+    $('a[role=tab]').click(e => {
+      e.preventDefault();
+      const tabId = $(e.currentTarget).attr('aria-controls');
+      const $tab = $('[data-tab-id="' + tabId + '"]');
+      const $navTabs = $(e.currentTarget).parents('.nav-tabs');
+      $navTabs.find('.active').removeClass('active');
+
+      $navTabs.find('[aria-controls]').each((i, tabLink) => {
+        const tabLinkTargetId = $(tabLink).attr('aria-controls');
+        const $tabLinkTarget = $('[data-tab-id="' + tabLinkTargetId + '"]');
+        $tabLinkTarget.removeClass('active');
+      });
+
+      // $(".nav-tabs .active, .tab-content .active").removeClass("active");
+      $(e.target).closest('li').addClass('active');
+      $tab.addClass("active");
+
+      codeMirrorInstances.forEach(codeMirrorInstance => {
+        codeMirrorInstance.refresh();
+      });
+
+      splitInstances.forEach(splitInstance => {
+        splitInstance.split.setSizes(splitInstance.sizes);
+      });
+    });
+
+    requestAnimationFrame(() => {
+      $('a[role=tab]').first().click();
+    });
+  };
+
+  require.config({
+    packages: [
+      {
+        name: "codemirror",
+        location: "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.9.0",
+        main: "codemirror"
+      }
+    ],
+    map: {
+      'codemirror': {
+        'codemirror/lib/codemirror': 'codemirror'
+      }
+    }
+  });
+  require([
+    "codemirror",
+    "codemirror/mode/htmlmixed/htmlmixed",
+    "codemirror/mode/css/css",
+    "codemirror/addon/hint/show-hint",
+    "codemirror/addon/hint/html-hint",
+    "codemirror/addon/mode/loadmode",
+    "codemirror/addon/search/search",
+    "codemirror/addon/search/searchcursor",
+    "codemirror/addon/selection/active-line",
+    "codemirror/addon/dialog/dialog"
+  ], function(CodeMirror) {
+          init(CodeMirror);
+  });
+};
+</script>

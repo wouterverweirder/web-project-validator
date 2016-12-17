@@ -1,0 +1,7 @@
+https://github.com/wouterverweirder/
+file:///Users/wouter/Desktop/hello.html
+/Users/wouter/Desktop/hello.htm
+https://github.com/wouterverweirder/#hello%20devine/how/are%20you
+https://github.com/wouterverweirder/hello%20devine/how/are%20you
+https://github.com/wouterverweirder/?a=test&b=hello%20world&c=hello%20devine
+https://github.com/wouterverweirder/?a=test&b=hello%20world&c=hello%20devine#a=test&b=hello%20world&c=hello%20devine

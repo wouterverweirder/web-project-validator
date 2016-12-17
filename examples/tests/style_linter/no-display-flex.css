@@ -1,0 +1,13 @@
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+html {
+  box-sizing: border-box;
+  font-size: 62.5%;
+}
+
+body {
+  background-image: url(../images/pattern.png);
+  color: white;
+}

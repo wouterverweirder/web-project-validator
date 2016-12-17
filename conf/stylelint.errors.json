@@ -1,8 +1,8 @@
 {
   "plugins": [
-    "./lib/reporter/lint-css/custom-rules/has-flexbox",
-    "./lib/reporter/lint-css/custom-rules/box-sizing-border-box",
-    "./lib/reporter/lint-css/custom-rules/font-size-reset"
+    "./lib/style_linter/custom-rules/has-flexbox",
+    "./lib/style_linter/custom-rules/box-sizing-border-box",
+    "./lib/style_linter/custom-rules/font-size-reset"
   ],
   "rules": {
     "devinehowest/box-sizing-border-box": true,

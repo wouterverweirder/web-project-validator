@@ -2,17 +2,16 @@
 
 Analyse an html project automatically and get a report with info on:
 
-- html validation (using validator.nu)
+- html validation
 - html outline (using h5o)
 - css quality (using stylelint)
 - file naming (use lowercase characters, no special characters, ...)
 - file resolving (get reports if referenced files cannot be found)
-- screenshots (phantomjs & firefox)
 - images (which images are loaded from image tags, which images are css background images)
 
 ## Installation
 
-The validator runs on node 4+. There are 2 additional dependencies:
+The validator runs on node 5+. There are 2 additional dependencies:
 
 ### PhantomJS
 
@@ -24,7 +23,7 @@ $ npm install -g phantomjs-prebuilt
 
 ### JDK
 
-You will need a recent version of JAVA, as both Selenium and the offline w3c validator depends on that.
+You will need a recent version of JAVA, as the offline w3c validator depends on that.
 On OSX this might be a challenge. These are the steps I followed to update my Java version:
 
 1. Download the latest JDK version on http://www.oracle.com/technetwork/java/javase/downloads/index.html
@@ -58,14 +57,6 @@ On OSX this might be a challenge. These are the steps I followed to update my Ja
   Java HotSpot(TM) 64-Bit Server VM (build 25.65-b01, mixed mode)
   ```
 
-### GraphicsMagick
-
-Stiching browser screenshots happens a lot faster if you've got GraphicsMagick installed on your system. The easiest way to install this is with [Homebrew](http://mxcl.github.io/homebrew/)
-
-```sh
-$ brew install graphicsmagick
-```
-
 ## Usage
 
 ### Get a report on a url
@@ -94,20 +85,4 @@ This will validate the urls specified in a given file. Urls inside this file are
 
 ```sh
 $ node app.js urls.txt
-```
-
-### Create screenshots
-
-Use the --screenshots cli option:
-
-```sh
-$ node app.js https://github.com --screenshots
-```
-
-### Use the online w3c validator instead of the offline validator
-
-Use the --html-validator cli option:
-
-```sh
-$ node app.js https://github.com --html-validator=online
 ```

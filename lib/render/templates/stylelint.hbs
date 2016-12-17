@@ -1,0 +1,44 @@
+<section data-file="{{url}}">
+  <header>
+    <h1 class="h{{indentLevel}}">
+      Lint CSS:
+      <span class="small">{{numErrors}} errors / {{numWarnings}} warnings</span>
+    </h1>
+  </header>
+  <p>{{url}}</p>
+  <section>
+    <header class="hidden"><h1 class="h{{indentLevel2}}">validation messages</h1></header>
+    {{#each errors}}
+      <article class="panel panel-{{outputType}}">
+        <header class="panel-heading"><h1 class="panel-title">{{outputType}}: {{message}}</h1></header>
+        <div class="panel-body">
+          <p class="message">{{numMessages}} occurences:</p>
+          <ol class="evidence">
+          {{#each evidence}}
+            <li data-line="{{line}}">
+              {{#if line}}<span>Line: {{line}}</span>{{/if}}
+              {{#if text}}<pre>{{text}}</pre>{{/if}}
+            </li>
+          {{/each}}
+          </ol>
+        </div>
+      </article>
+    {{/each}}
+    {{#each warnings}}
+      <article class="panel panel-{{outputType}}">
+        <header class="panel-heading"><h1 class="panel-title">{{outputType}}: {{message}}</h1></header>
+        <div class="panel-body">
+          <p class="message">{{numMessages}} occurences:</p>
+          <ol class="evidence">
+          {{#each evidence}}
+            <li data-line="{{line}}">
+              {{#if line}}<span>Line: {{line}}</span>{{/if}}
+              {{#if text}}<pre>{{text}}</pre>{{/if}}
+            </li>
+          {{/each}}
+          </ol>
+        </div>
+      </article>
+    {{/each}}
+  </section>
+</section>

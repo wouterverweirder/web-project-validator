@@ -1,0 +1,49 @@
+<section>
+  <header>
+    <h1 class="h{{indentLevel}}">
+      Validate Resources
+      <span class="small">{{resources.length}} resources ({{numErrors}} errors / {{numWarnings}} warnings)</span>
+    </h1>
+  </header>
+  <section>
+    <header><h1 class="h{{indentLevel2}}">validation messages</h1></header>
+    {{#each errors}}
+      <article class="panel panel-{{outputType}}">
+        <header class="panel-heading"><h1 class="panel-title">{{outputType}}: {{message}}</h1></header>
+        <div class="panel-body">
+          <p class="message">{{numMessages}} occurences:</p>
+          <ol>
+            {{#each evidence}}
+              <li data-line="{{line}}">
+                {{url}}{{message}}
+              </li>
+            {{/each}}
+          </ol>
+        </div>
+      </article>
+    {{/each}}
+    {{#each warnings}}
+      <article class="panel panel-{{outputType}}">
+        <header class="panel-heading"><h1 class="panel-title">{{outputType}}: {{message}}</h1></header>
+        <div class="panel-body">
+          <p class="message">{{numMessages}} occurences:</p>
+          <ol>
+            {{#each evidence}}
+              <li data-line="{{line}}">
+                {{url}}{{message}}
+              </li>
+            {{/each}}
+          </ol>
+        </div>
+      </article>
+    {{/each}}
+  </section>
+  <section>
+    <header><h1 class="h{{indentLevel2}}">resources list</h1></header>
+    <ol>
+    {{#each resources}}
+    <li>{{url}}</li>
+    {{/each}}
+    </ol>
+  </section>
+</section>
