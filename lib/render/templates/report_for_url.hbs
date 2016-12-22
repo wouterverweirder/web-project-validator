@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.22/require.min.js"></script>
+    <script src="https://nathancahill.github.io/Split.js/split.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.9.0/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.9.0/addon/dialog/dialog.css" />
+    <style>
+    .source-report-container {
+      height: 600px;
+    }
+
+    .source-report-validator-reports {
+      padding: 1em;
+    }
+
+    .split {
+      -webkit-box-sizing: border-box;
+         -moz-box-sizing: border-box;
+              box-sizing: border-box;
+
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .gutter {
+      background-color: #eee;
+
+      background-repeat: no-repeat;
+      background-position: 50%;
+    }
+
+    .gutter.gutter-horizontal {
+      /*background-image: url('grips/vertical.png');*/
+      cursor: ew-resize;
+    }
+
+    .gutter.gutter-vertical {
+      /*background-image: url('grips/horizontal.png');*/
+      cursor: ns-resize;
+    }
+    .split.split-horizontal, .gutter.gutter-horizontal {
+      height: 100%;
+      float: left;
+    }
+    .CodeMirror {
+      height: 100%;
+      background: white;
+    }
+    .image-report-image-container {
+      border: solid 2px #999;
+      background: #ddd;
+      margin-bottom: 1em;
+    }
+    .image-report-image-container:hover {
+      border: solid 2px red;
+      background: rgba(255, 0, 0, 0.5);
+    }
+    .image-report-image-container img {
+      min-width: 100px;
+      min-height: 100px;
+    }
+    </style>
+  </head>
+  <body>
+    <main class="container-fluid">
+      <header><h1>Webpage Report</h1></header>
+      <p><a href="{{url}}">{{url}}</a>{{#if pageSpeedUrl}} - <a href="{{pageSpeedUrl}}">pagespeed</a>{{/if}}</p>
+      <ul class="nav nav-tabs" role="tablist">
+        {{{navTabsHtml}}}
+      </ul>
+      <div class="tab-content">
+        {{{tabContentHtml}}}
+      </div>
+    </main>
+    <script>
+    'use strict';
+    {
+
+      const codeMirrorInstances = [];
+      const codeMirrorInstancesByFileName = {};
+      const splitInstances = [];
+
+      const init = CodeMirror => {
+        initCodeMirror(CodeMirror);
+        initTabs();
+        initSplit();
+        initJumpToLine();
+      };
+
+      const initCodeMirror = CodeMirror => {
+        $('div[data-mode]').each((index, div) => {
+          const fileContent = window.atob(div.innerHTML);
+          const codeMirror = CodeMirror(elt => {
+            div.parentNode.replaceChild(elt, div);
+          }, {
+            value: fileContent,
+            lineNumbers: true,
+            styleActiveLine: true,
+            mode: $(div).data('mode'),
+            extraKeys: {"Ctrl-Space": "autocomplete"}
+          });
+          codeMirrorInstances.push(codeMirror);
+          if(div.dataset.file) {
+            let fileName = div.dataset.file;
+            if(fileName.indexOf('file://') === 0) {
+              fileName = fileName.substr('file://'.length);
+            }
+            codeMirrorInstancesByFileName[fileName] = codeMirror;
+          }
+        });
+      };
+
+      const initSplit = function() {
+        //get the split containers
+        const splitContainerEls = document.querySelectorAll('.split-container');
+        for(let i = 0; i < splitContainerEls.length; i++) {
+          //get all first-descendant splits
+          const splitContainerEl = splitContainerEls[i];
+          const splitEls = [];
+          const splitSizes = [];
+          for(let j = 0; j < splitContainerEl.children.length; j++) {
+            if(!splitContainerEl.children[j].classList.contains('split')) {
+              continue;
+            }
+            const splitEl = splitContainerEl.children[j];
+            const splitSize = parseFloat(splitEl.dataset.splitSize);
+            splitEls.push(splitEl);
+            splitSizes.push(splitSize);
+          }
+          const split = Split(splitEls, {
+              sizes: splitSizes,
+              minSize: 50
+          });
+          splitInstances.push({
+            split: split,
+            sizes: splitSizes
+          });
+        }
+      };
+
+      const initJumpToLine = () => {
+        const elementsWithDataLine = document.querySelectorAll('[data-line]');
+        const numElements = elementsWithDataLine.length;
+        for(let i = 0; i < numElements; i++) {
+          const element = elementsWithDataLine[i];
+          //get the file we want to jump to
+          let fileName = element.dataset.file;
+          if(!fileName) {
+            const $parentElementWithFileName = $(element).parents('[data-file]');
+            if($parentElementWithFileName.length > 0) {
+              fileName = $parentElementWithFileName[0].dataset.file;
+            }
+          }
+          if(fileName) {
+            if(fileName.indexOf('file://') === 0) {
+              fileName = fileName.substr('file://'.length);
+            }
+            //get the codemirror element for this one
+            const codeMirror = codeMirrorInstancesByFileName[fileName];
+            if(codeMirror) {
+              element.addEventListener('click', () => {
+                codeMirror.setCursor(parseInt(element.dataset.line) - 1);
+              });
+            }
+          }
+        }
+      };
+
+      const initTabs = () => {
+        //manual manage tabs, as we don't want to work with element ids
+        $('a[role=tab]').click(e => {
+          e.preventDefault();
+          const tabId = $(e.currentTarget).attr('aria-controls');
+          const $tab = $('[data-tab-id="' + tabId + '"]');
+          const $navTabs = $(e.currentTarget).parents('.nav-tabs');
+          $navTabs.find('.active').removeClass('active');
+
+          $navTabs.find('[aria-controls]').each((i, tabLink) => {
+            const tabLinkTargetId = $(tabLink).attr('aria-controls');
+            const $tabLinkTarget = $('[data-tab-id="' + tabLinkTargetId + '"]');
+            $tabLinkTarget.removeClass('active');
+          });
+
+          // $(".nav-tabs .active, .tab-content .active").removeClass("active");
+          $(e.target).closest('li').addClass('active');
+          $tab.addClass("active");
+
+          codeMirrorInstances.forEach(codeMirrorInstance => {
+            codeMirrorInstance.refresh();
+          });
+
+          splitInstances.forEach(splitInstance => {
+            splitInstance.split.setSizes(splitInstance.sizes);
+          });
+        });
+
+        requestAnimationFrame(() => {
+          $('a[role=tab]').first().click();
+        });
+      };
+
+      require.config({
+        packages: [
+          {
+            name: "codemirror",
+            location: "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.9.0",
+            main: "codemirror"
+          }
+        ],
+        map: {
+          'codemirror': {
+            'codemirror/lib/codemirror': 'codemirror'
+          }
+        }
+      });
+      require([
+        "codemirror",
+        "codemirror/mode/htmlmixed/htmlmixed",
+        "codemirror/mode/css/css",
+        "codemirror/addon/hint/show-hint",
+        "codemirror/addon/hint/html-hint",
+        "codemirror/addon/mode/loadmode",
+        "codemirror/addon/search/search",
+        "codemirror/addon/search/searchcursor",
+        "codemirror/addon/selection/active-line",
+        "codemirror/addon/dialog/dialog"
+      ], function(CodeMirror) {
+              init(CodeMirror);
+      });
+    };
+    </script>
+  </body>
+</html>
