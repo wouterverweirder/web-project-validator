@@ -8,7 +8,6 @@
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.22/require.min.js"></script>
-    <script src="https://nathancahill.github.io/Split.js/split.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.9.0/codemirror.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.9.0/addon/dialog/dialog.css" />
     <style>
@@ -221,6 +220,7 @@
         }
       });
       require([
+        "https://nathancahill.github.io/Split.js/split.js",
         "codemirror",
         "codemirror/mode/htmlmixed/htmlmixed",
         "codemirror/mode/css/css",
@@ -231,8 +231,9 @@
         "codemirror/addon/search/searchcursor",
         "codemirror/addon/selection/active-line",
         "codemirror/addon/dialog/dialog"
-      ], function(CodeMirror) {
-              init(CodeMirror);
+      ], function(Split, CodeMirror) {
+        window.Split = Split;
+        init(CodeMirror);
       });
     };
     </script>
