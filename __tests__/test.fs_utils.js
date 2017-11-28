@@ -439,6 +439,19 @@ describe(`fs_utils test`, () => {
         });
       });
     });
+    describe(`https file`, () => {
+      it(`downloads a file over https`, () => {
+        const inputFile = `https://howest.be/css/styles.css`;
+        const outputFile = path.resolve(tmpFolder, `styles.css`);
+        return fsUtils.downloadFile(inputFile, outputFile, `utf-8`)
+        .then(fileContents => {
+          console.log(fileContents);
+          return fsUtils.statPromised(outputFile).then(stats => {
+            expect(stats.isFile()).toBe(true);
+          });
+        });
+      });
+    });
     describe(`local http projects`, () => {
       //start a local http server
       //start a local http server
