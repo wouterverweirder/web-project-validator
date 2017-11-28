@@ -51,6 +51,9 @@ describe(`phantom_processor`, () => {
             return {
               processRequestedResources: jest.fn(() => {
                 return Promise.resolve();
+              }),
+              createResourcesReport: jest.fn(() => {
+                return Promise.resolve();
               })
             };
           });
@@ -225,6 +228,9 @@ describe(`phantom_processor`, () => {
             return {
               processRequestedResources: jest.fn(() => {
                 return Promise.resolve();
+              }),
+              createResourcesReport: jest.fn(() => {
+                return Promise.resolve();
               })
             };
           });
@@ -311,6 +317,9 @@ describe(`phantom_processor`, () => {
           jest.mock(`../lib/resource_processor`, () => {
             return {
               processRequestedResources: jest.fn(() => {
+                return Promise.resolve();
+              }),
+              createResourcesReport: jest.fn(() => {
                 return Promise.resolve();
               })
             };
@@ -443,6 +452,9 @@ describe(`phantom_processor`, () => {
             return {
               processRequestedResources: jest.fn(() => {
                 return Promise.resolve();
+              }),
+              createResourcesReport: jest.fn(() => {
+                return Promise.resolve();
               })
             };
           });
@@ -562,6 +574,9 @@ describe(`phantom_processor`, () => {
             return {
               processRequestedResources: jest.fn(() => {
                 return Promise.resolve();
+              }),
+              createResourcesReport: jest.fn(() => {
+                return Promise.resolve();
               })
             };
           });
@@ -648,6 +663,9 @@ describe(`phantom_processor`, () => {
           jest.mock(`../lib/resource_processor`, () => {
             return {
               processRequestedResources: jest.fn(() => {
+                return Promise.resolve();
+              }),
+              createResourcesReport: jest.fn(() => {
                 return Promise.resolve();
               })
             };
