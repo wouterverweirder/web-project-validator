@@ -67,6 +67,60 @@ describe(`fs_utils test`, () => {
       expect(fsUtils.getPathWithProtocol(input)).toBe(expectedOutput);
     });
   });
+
+  describe(`getBasename`, () => {
+    it(`works with a local path without file:// prefix`, () => {
+      const input = `/Users/wouter/Desktop/test.html`;
+      const expectedOutput = `test.html`;
+      expect(fsUtils.getBasename(input)).toBe(expectedOutput);
+    });
+    it(`url encodes spaces in the path name`, () => {
+      const input = `/Users/wouter/Desktop/test file with spaces.html`;
+      const expectedOutput = `test%20file%20with%20spaces.html`;
+      expect(fsUtils.getBasename(input)).toBe(expectedOutput);
+    });
+    it(`does not url encodes a path name twice`, () => {
+      const input = `/Users/wouter/Desktop/test%20file%20with%20spaces.html`;
+      const expectedOutput = `test%20file%20with%20spaces.html`;
+      expect(fsUtils.getBasename(input)).toBe(expectedOutput);
+    });
+    it(`works with file:// files`, () => {
+      const input = `file:///Users/wouter/Desktop/test.html`;
+      const expectedOutput = `test.html`;
+      expect(fsUtils.getBasename(input)).toBe(expectedOutput);
+    });
+    it(`works with a relative path`, () => {
+      const input = `./examples/tests/fs_utils/download_file/photo.jpg`;
+      const expectedOutput = `photo.jpg`;
+      expect(fsUtils.getBasename(input)).toBe(expectedOutput);
+    });
+    it(`works with http:// files`, () => {
+      const input = `http://github.com/wouterverweirder/test.html`;
+      const expectedOutput = `test.html`;
+      expect(fsUtils.getBasename(input)).toBe(expectedOutput);
+    });
+    it(`works with https:// files`, () => {
+      const input = `https://github.com/wouterverweirder/test.html`;
+      const expectedOutput = `test.html`;
+      expect(fsUtils.getBasename(input)).toBe(expectedOutput);
+    });
+    it(`strips querystrings`, () => {
+      const input = `https://github.com/wouterverweirder/test.html?a=test&b=hello world&c=hello%20devine`;
+      const expectedOutput = `test.html`;
+      expect(fsUtils.getBasename(input)).toBe(expectedOutput);
+    });
+    it(`strips anchors`, () => {
+      const input = `https://github.com/wouterverweirder/test.html#a=test&b=hello world&c=hello%20devine`;
+      const expectedOutput = `test.html`;
+      expect(fsUtils.getBasename(input)).toBe(expectedOutput);
+    });
+    it(`strips querystrings and anchors`, () => {
+      const input = `https://github.com/wouterverweirder/test.html?a=test&b=hello world&c=hello%20devine#a=test&b=hello world&c=hello%20devine`;
+      const expectedOutput = `test.html`;
+      expect(fsUtils.getBasename(input)).toBe(expectedOutput);
+    });
+  });
+
   describe(`getSanitizedLocalPath`, () => {
     it(`doesn't affect a valid path`, () => {
       const input = `/Users/wouter/Desktop/test.html`;
@@ -444,8 +498,7 @@ describe(`fs_utils test`, () => {
         const inputFile = `https://howest.be/css/styles.css`;
         const outputFile = path.resolve(tmpFolder, `styles.css`);
         return fsUtils.downloadFile(inputFile, outputFile, `utf-8`)
-        .then(fileContents => {
-          console.log(fileContents);
+        .then(() => {
           return fsUtils.statPromised(outputFile).then(stats => {
             expect(stats.isFile()).toBe(true);
           });

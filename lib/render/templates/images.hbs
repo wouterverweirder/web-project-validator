@@ -10,6 +10,16 @@
     <div style="display: flex;">
       <div class="image-report-image-container">
         <img src="{{url}}" />
+        <div class="image-metadata">
+          name: {{basename}}
+          <br />type: {{mimeType}}
+          {{#each includedFrom}}
+            {{#if width}}
+              <br />displayed: {{width}}x{{height}}
+              <br />natural: {{naturalWidth}}x{{naturalHeight}}
+            {{/if}}
+          {{/each}}
+        </div>
       </div>
     </div>
     {{/each}}
@@ -20,6 +30,16 @@
     <div style="display: flex;">
       <div class="image-report-image-container">
         <img src="{{url}}" />
+        <div class="image-metadata">
+          name: {{basename}}
+          <br />type: {{mimeType}}
+          {{#each includedFrom}}
+            {{#if width}}
+              <br />displayed: {{width}}x{{height}}
+              <br />natural: {{naturalWidth}}x{{naturalHeight}}
+            {{/if}}
+          {{/each}}
+        </div>
       </div>
     </div>
     {{/each}}
