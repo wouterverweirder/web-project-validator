@@ -38,7 +38,7 @@ describe(`resource_processor`, () => {
   beforeEach(() => {
     jest.mock(`../lib/html_validator`, () => {
       return {
-        validateHtmlSource: jest.fn(() => {
+        validateHtmlFile: jest.fn(() => {
           return Promise.resolve();
         })
       };
@@ -96,7 +96,7 @@ describe(`resource_processor`, () => {
             return resourceProcessor.processRequestedResource(input, inputUrl, inputResource)
             .then(() => {
               const htmlValidator = require(`../lib/html_validator`);
-              expect(htmlValidator.validateHtmlSource.mock.calls.length).toBe(1);
+              expect(htmlValidator.validateHtmlFile.mock.calls.length).toBe(1);
             });
           });
           it(`does not at a style report when the file isnt a css file`, () => {
@@ -138,7 +138,7 @@ describe(`resource_processor`, () => {
             return resourceProcessor.processRequestedResource(input, inputUrl, inputResource)
             .then(() => {
               const htmlValidator = require(`../lib/html_validator`);
-              expect(htmlValidator.validateHtmlSource.mock.calls.length).toBe(0);
+              expect(htmlValidator.validateHtmlFile.mock.calls.length).toBe(0);
             });
           });
           it(`does not at a style report when the file isnt a css file`, () => {
@@ -184,7 +184,7 @@ describe(`resource_processor`, () => {
             return resourceProcessor.processRequestedResource(input, inputUrl, inputStyleResource)
             .then(() => {
               const htmlValidator = require(`../lib/html_validator`);
-              expect(htmlValidator.validateHtmlSource.mock.calls.length).toBe(0);
+              expect(htmlValidator.validateHtmlFile.mock.calls.length).toBe(0);
             });
           });
           it(`adds a style report when the file is a css file`, () => {
@@ -234,7 +234,7 @@ describe(`resource_processor`, () => {
             return resourceProcessor.processRequestedResource(input, inputUrl, inputStyleResource)
             .then(() => {
               const htmlValidator = require(`../lib/html_validator`);
-              expect(htmlValidator.validateHtmlSource.mock.calls.length).toBe(0);
+              expect(htmlValidator.validateHtmlFile.mock.calls.length).toBe(0);
             });
           });
           it(`does not at a style report for the css file`, () => {
