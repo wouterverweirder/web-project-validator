@@ -13,6 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "babel-preset-env": "^1.6.1",
+    "get-urls": "^7.2.0",
     "glob": "^7.1.1",
     "h5o": "^0.11.3",
     "handlebars": "^4.0.6",
