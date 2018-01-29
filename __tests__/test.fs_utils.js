@@ -413,6 +413,17 @@ describe(`fs_utils test`, () => {
       expect(fsUtils.getRelativeUrl(`http://bump-festival.be`, `http://fonts.gstatic.com/s/roboto/`)).toBe(`http://fonts.gstatic.com/s/roboto/`);
     });
   });
+  describe(`getUrlWithTrailingSlashIfNeeded`, () => {
+    it(`works with a trailing slash present`, () => {
+      expect(fsUtils.getUrlWithTrailingSlashIfNeeded(`http://bump-festival.be/2017/`)).toBe(`http://bump-festival.be/2017/`);
+    });
+    it(`works without a trailing slash present`, () => {
+      expect(fsUtils.getUrlWithTrailingSlashIfNeeded(`http://bump-festival.be/2017`)).toBe(`http://bump-festival.be/2017/`);
+    });
+    it(`works with a querystring`, () => {
+      expect(fsUtils.getUrlWithTrailingSlashIfNeeded(`http://bump-festival.be/2017?one=1&two=2`)).toBe(`http://bump-festival.be/2017/?one=1&two=2`);
+    });
+  });
   describe(`downloadFile`, () => {
     const tmpFolder = path.resolve(fsUtilsTestFolder, `tmp`);
     beforeEach(() => {

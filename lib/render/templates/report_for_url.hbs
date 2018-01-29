@@ -76,7 +76,10 @@
   <body>
     <main class="container-fluid">
       <header><h1>Webpage Report</h1></header>
-      <p><a href="{{url}}">{{url}}</a>{{#if pageSpeedUrl}} - <a href="{{pageSpeedUrl}}">pagespeed</a>{{/if}}</p>
+      <p><a href="{{url}}">{{url}}</a>
+        {{#if pageSpeedUrl}} - <a href="{{pageSpeedUrl}}">pagespeed</a>{{/if}}
+        {{#if githubUrl}} - <a href="{{githubUrl}}">github</a>{{/if}}
+      </p>
       <ul class="nav nav-tabs" role="tablist">
         {{{navTabsHtml}}}
       </ul>
