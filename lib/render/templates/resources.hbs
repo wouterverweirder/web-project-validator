@@ -8,10 +8,9 @@
   <section>
     <header><h1 class="h{{indentLevel2}}">validation messages</h1></header>
     {{#each errors}}
-      <article class="panel panel-{{outputType}}">
-        <header class="panel-heading"><h1 class="panel-title">{{outputType}}: {{message}}</h1></header>
-        <div class="panel-body">
-          <p class="message">{{numMessages}} occurences:</p>
+      <article class="card mb-3">
+        <header class="card-header bg-{{outputType}} text-white"><h5 class="mb-0">{{numMessages}}x {{outputType}}: {{message}}</h5></header>
+        <div class="card-body">
           <ol>
             {{#each evidence}}
               <li data-line="{{line}}">
@@ -23,10 +22,9 @@
       </article>
     {{/each}}
     {{#each warnings}}
-      <article class="panel panel-{{outputType}}">
-        <header class="panel-heading"><h1 class="panel-title">{{outputType}}: {{message}}</h1></header>
-        <div class="panel-body">
-          <p class="message">{{numMessages}} occurences:</p>
+      <article class="card mb-3">
+        <header class="card-header bg-{{outputType}} text-white"><h5 class="mb-0">{{numMessages}}x {{outputType}}: {{message}}</h5></header>
+        <div class="card-body">
           <ol>
             {{#each evidence}}
               <li data-line="{{line}}">
