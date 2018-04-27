@@ -979,7 +979,7 @@ describe(`phantom_processor`, () => {
       describe(`local http project with spaces in paths`, () => {
         const inputUrl = `http://localhost:${httpServerPort}/paths%20with%20spaces/index.html`;
         const input = {
-          urls: [`http://localhost:${httpServerPort}/paths with spaces/index.html`],
+          urls: [inputUrl],
           localReportPath: {
             folder: path.resolve(projectRoot, `output`)
           }

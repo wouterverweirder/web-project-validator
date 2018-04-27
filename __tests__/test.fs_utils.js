@@ -496,18 +496,6 @@ describe(`fs_utils test`, () => {
       it(`downloads files over https`, () => {
         const inputFile = `https://github.com/wouterverweirder`;
         const outputFile = path.resolve(tmpFolder, `wouterverweirder.html`);
-        return fsUtils.downloadFile(inputFile, outputFile)
-        .then(() => {
-          return fsUtils.statPromised(outputFile).then(stats => {
-            expect(stats.isFile()).toBe(true);
-          });
-        });
-      });
-    });
-    describe(`https file`, () => {
-      it(`downloads a file over https`, () => {
-        const inputFile = `https://howest.be/css/styles.css`;
-        const outputFile = path.resolve(tmpFolder, `styles.css`);
         return fsUtils.downloadFile(inputFile, outputFile, `utf-8`)
         .then(() => {
           return fsUtils.statPromised(outputFile).then(stats => {

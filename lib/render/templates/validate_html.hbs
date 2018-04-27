@@ -10,8 +10,8 @@
     <header class="hidden"><h1 class="h{{indentLevel2}}">validation messages</h1></header>
     {{#each errors}}
       <article class="card mb-3">
-        <header class="card-header bg-{{outputType}} text-white"><h5 class="mb-0"><a href="#validate-html-error-{{@index}}" data-toggle="collapse" class="text-white">{{numMessages}}x {{outputType}} - {{message}}</a></h5></header>
-        <div class="card-body collapse" id="validate-html-error-{{@index}}">
+        <header class="card-header bg-{{outputType}} text-white"><h5 class="mb-0"><a href="#validate-html-error-{{@root.url}}-{{@index}}" data-toggle="collapse" class="text-white">{{numMessages}}x {{outputType}} - {{message}}</a></h5></header>
+        <div class="card-body collapse" id="validate-html-error-{{@root.url}}-{{@index}}">
           <ol class="evidence">
           {{#each evidence}}
             <li data-line="{{line}}">
@@ -25,8 +25,8 @@
     {{/each}}
     {{#each warnings}}
       <article class="card mb-3">
-        <header class="card-header bg-{{outputType}} text-white"><h5 class="mb-0"><a href="#validate-html-warning-{{@index}}" data-toggle="collapse" class="text-white">{{numMessages}}x {{outputType}} - {{message}}</a></h5></header>
-        <div class="card-body collapse" id="validate-html-warning-{{@index}}">
+        <header class="card-header bg-{{outputType}} text-white"><h5 class="mb-0"><a href="#validate-html-warning-{{@root.url}}-{{@index}}" data-toggle="collapse" class="text-white">{{numMessages}}x {{outputType}} - {{message}}</a></h5></header>
+        <div class="card-body collapse" id="validate-html-warning-{{@root.url}}-{{@index}}">
           <ol class="evidence">
           {{#each evidence}}
             <li data-line="{{line}}">

@@ -58,59 +58,82 @@ describe(`lib index test`, () => {
       });
     });
   });
-  describe(`getUrlsForInputPath`, () => {
+  describe(`getUrlFilesInFolder`, () => {
     const path = require(`path`);
-    const testFolder = path.resolve(testsAssetsFolder, `index`, `get_urls_for_input_path`);
-    it(`result is an array containing just one file for the path to a local html file`, () => {
-      return require(`../lib`).getUrlsForInputPath(path.resolve(testFolder, `hello.htm`))
-      .then(result => {
-        const expectedOutput = [
-          `file://${path.resolve(testFolder, `hello.htm`)}`
-        ];
-        expect(result).toEqual(expectedOutput);
-      });
-    });
-    it(`result is an array containing all html file paths for the path to a local folder`, () => {
-      return require(`../lib`).getUrlsForInputPath(testFolder)
-      .then(result => {
-        const expectedOutput = [
-          `file://${path.resolve(testFolder, `hello.htm`)}`,
-          `file://${path.resolve(testFolder, `subdir_1/is.html`)}`,
-          `file://${path.resolve(testFolder, `subdir_1/me.html`)}`,
-          `file://${path.resolve(testFolder, `subdir_1/subdir_1_2/are.htm`)}`,
-          `file://${path.resolve(testFolder, `subdir_1/subdir_1_2/how.html`)}`,
-          `file://${path.resolve(testFolder, `subdir_1/this.htm`)}`,
-          `file://${path.resolve(testFolder, `subdir_2/with%20spaces.html`)}`,
-          `file://${path.resolve(testFolder, `subdir_2/you.html`)}`,
-          `file://${path.resolve(testFolder, `world.html`)}`,
-        ];
-        expect(result).toEqual(expectedOutput);
-      });
-    });
-    it(`result is an array containing the listed paths for the path to a local url list`, () => {
-      return require(`../lib`).getUrlsForInputPath(path.resolve(testFolder, `urls.txt`))
-      .then(result => {
-        const expectedOutput = [
-          `https://github.com/wouterverweirder/`,
-          `file:///Users/wouter/Desktop/hello.html`,
-          `file:///Users/wouter/Desktop/world.html`,
-          `https://github.com/wouterverweirder/hello%20devine/how/are%20you`,
-          `https://github.com/wouterverweirder/this/has%20spaces`,
-          `https://github.com/wouterverweirder/?a=test&b=hello%20world&c=hello%20devine`
-        ];
-        expect(result).toEqual(expectedOutput);
-      });
-    });
-    it(`result is an array containing just one url for the http path to a remote url`, () => {
-      return require(`../lib`).getUrlsForInputPath(`https://github.com/wouterverweirder`)
-      .then(result => {
-        const expectedOutput = [
-          `https://github.com/wouterverweirder`
-        ];
-        expect(result).toEqual(expectedOutput);
-      });
+    const testFolder = path.resolve(testsAssetsFolder, `index`, `get_url_files_in_folder`);
+    it(`contains a list of files which contain a url / shortcut to an online project`, () => {
+      return require(`../lib`).getUrlFilesInFolder(testFolder)
+        .then(result => {
+          const expectedOutput = [
+            `file://${path.resolve(testFolder, `link.rtfd`)}`,
+            `file://${path.resolve(testFolder, `url.rtfd`)}`,
+            `file://${path.resolve(testFolder, `bplist.webloc`)}`,
+            `file://${path.resolve(testFolder, `link.md`)}`,
+            `file://${path.resolve(testFolder, `link.rtf`)}`,
+            `file://${path.resolve(testFolder, `link.txt`)}`,
+            `file://${path.resolve(testFolder, `url.md`)}`,
+            `file://${path.resolve(testFolder, `no-extension-webloc`)}`,
+            `file://${path.resolve(testFolder, `url.rtf`)}`,
+            `file://${path.resolve(testFolder, `url.txt`)}`,
+            `file://${path.resolve(testFolder, `webloc.webloc`)}`
+          ];
+          expect(result.sort()).toEqual(expectedOutput.sort());
+        });
     });
   });
+  // describe(`getUrlsForProjectPath`, () => {
+  //   const path = require(`path`);
+  //   const testFolder = path.resolve(testsAssetsFolder, `index`, `get_urls_for_input_path`);
+  //   it(`result is an array containing just one file for the path to a local html file`, () => {
+  //     return require(`../lib`).getUrlsForProjectPath(path.resolve(testFolder, `hello.htm`))
+  //     .then(result => {
+  //       const expectedOutput = [
+  //         `file://${path.resolve(testFolder, `hello.htm`)}`
+  //       ];
+  //       expect(result).toEqual(expectedOutput);
+  //     });
+  //   });
+  //   it(`result is an array containing all html file paths for the path to a local folder`, () => {
+  //     return require(`../lib`).getUrlsForProjectPath(testFolder)
+  //     .then(result => {
+  //       const expectedOutput = [
+  //         `file://${path.resolve(testFolder, `hello.htm`)}`,
+  //         `file://${path.resolve(testFolder, `subdir_1/is.html`)}`,
+  //         `file://${path.resolve(testFolder, `subdir_1/me.html`)}`,
+  //         `file://${path.resolve(testFolder, `subdir_1/subdir_1_2/are.htm`)}`,
+  //         `file://${path.resolve(testFolder, `subdir_1/subdir_1_2/how.html`)}`,
+  //         `file://${path.resolve(testFolder, `subdir_1/this.htm`)}`,
+  //         `file://${path.resolve(testFolder, `subdir_2/with%20spaces.html`)}`,
+  //         `file://${path.resolve(testFolder, `subdir_2/you.html`)}`,
+  //         `file://${path.resolve(testFolder, `world.html`)}`,
+  //       ];
+  //       expect(result).toEqual(expectedOutput);
+  //     });
+  //   });
+  //   it(`result is an array containing the listed paths for the path to a local url list`, () => {
+  //     return require(`../lib`).getUrlsForProjectPath(path.resolve(testFolder, `urls.txt`))
+  //     .then(result => {
+  //       const expectedOutput = [
+  //         `https://github.com/wouterverweirder/`,
+  //         `file:///Users/wouter/Desktop/hello.html`,
+  //         `file:///Users/wouter/Desktop/world.html`,
+  //         `https://github.com/wouterverweirder/hello%20devine/how/are%20you`,
+  //         `https://github.com/wouterverweirder/this/has%20spaces`,
+  //         `https://github.com/wouterverweirder/?a=test&b=hello%20world&c=hello%20devine`
+  //       ];
+  //       expect(result).toEqual(expectedOutput);
+  //     });
+  //   });
+  //   it(`result is an array containing just one url for the http path to a remote url`, () => {
+  //     return require(`../lib`).getUrlsForProjectPath(`https://github.com/wouterverweirder`)
+  //     .then(result => {
+  //       const expectedOutput = [
+  //         `https://github.com/wouterverweirder`
+  //       ];
+  //       expect(result).toEqual(expectedOutput);
+  //     });
+  //   });
+  // });
   describe(`setReportPropertiesBasedOnInputPath`, () => {
     const path = require(`path`);
     const testFolder = path.resolve(testsAssetsFolder, `index`, `set_report_properties_based_on_input_path`);
@@ -181,8 +204,8 @@ describe(`lib index test`, () => {
             `https://github.com/wouterverweirder/`,
             `file:///Users/wouter/Desktop/hello.html`,
             `file:///Users/wouter/Desktop/world.html`,
-            `https://github.com/wouterverweirder/hello%20devine/how/are%20you`,
-            `https://github.com/wouterverweirder/this/has%20spaces`,
+            `https://github.com/wouterverweirder/hello%20devine/how/are%20you/`,
+            `https://github.com/wouterverweirder/this/has%20spaces/`,
             `https://github.com/wouterverweirder/?a=test&b=hello%20world&c=hello%20devine`
           ];
           expect(result.urls).toEqual(expectedOutput);
@@ -192,7 +215,7 @@ describe(`lib index test`, () => {
         return require(`../lib`).setReportPropertiesBasedOnInputPath({}, `https://github.com/wouterverweirder`)
         .then(result => {
           const expectedOutput = [
-            `https://github.com/wouterverweirder`
+            `https://github.com/wouterverweirder/`
           ];
           expect(result.urls).toEqual(expectedOutput);
         });
