@@ -104,6 +104,14 @@
         initTabs();
         initSplit();
         initJumpToLine();
+        initLiveViewButtons();
+      };
+
+      const initLiveViewButtons = () => {
+        $('.btn-resize-live-view').on('click', e => {
+          const width = $(e.currentTarget).data('width');
+          $('#live-view').width(width);
+        });
       };
 
       const initCodeMirror = CodeMirror => {
