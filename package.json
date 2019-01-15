@@ -27,7 +27,7 @@
     "simple-plist": "^0.2.1",
     "stylelint": "^7.7.0",
     "stylelint-config-devine": "^1.0.1",
-    "validator-nu": "^2.1.15",
+    "validator-nu": "2.1.15",
     "yargs": "^6.5.0"
   },
   "devDependencies": {
