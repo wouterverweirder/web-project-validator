@@ -143,7 +143,7 @@ describe(`phantom_processor`, () => {
             },
             {
               url: fsUtils.getPathWithProtocol(path.resolve(phantomProcessorTestFolder, `normal`, `js`, `script.js`)),
-              type: false
+              type: `javascript`
             }
           ];
           expect(report.reportsByUrl).toBeTruthy();
@@ -671,7 +671,7 @@ describe(`phantom_processor`, () => {
             },
             {
               url: fsUtils.getPathWithProtocol(path.resolve(phantomProcessorTestFolder, `paths with spaces`, `javascript files`, `script.js`)),
-              type: false
+              type: `javascript`
             }
           ];
           expect(report.reportsByUrl).toBeTruthy();
@@ -805,7 +805,7 @@ describe(`phantom_processor`, () => {
             },
             {
               url: `http://localhost:${httpServerPort}/normal/js/script.js`,
-              type: false
+              type: `javascript`
             }
           ];
           expect(report.reportsByUrl).toBeTruthy();
@@ -1081,7 +1081,7 @@ describe(`phantom_processor`, () => {
             },
             {
               url: `http://localhost:${httpServerPort}/paths%20with%20spaces/javascript%20files/script.js`,
-              type: false
+              type: `javascript`
             }
           ];
           expect(report.reportsByUrl).toBeTruthy();

@@ -337,8 +337,8 @@ describe(`lib index test`, () => {
       jest.mock(`../lib/phantom_processor`, () => {
         return {
           buildReport: jest.fn((...rest) => {
-            console.log(`phantom_processor.buildReport mock`);
-            console.log(rest);
+            // console.log(`phantom_processor.buildReport mock`);
+            // console.log(rest);
             return Promise.resolve();
           })
         };
